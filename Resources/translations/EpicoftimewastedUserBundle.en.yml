@@ -1,0 +1,47 @@
+# Login form
+login_username:              "Username:"
+login_password:              "Password:"
+login_password_notice:       "Note: Password is case sensitive"
+login_forgot_password:       "Help!  I forgot my password!"
+login_login:                 "Login"
+login_authentication_failed: "Authentication failed"
+
+# User form
+user_username:             "Username:"
+user_email:                "E-mail:"
+user_plainPassword_first:  "Password:"
+user_plainPassword_second: "Repeat:"
+user_password_mismatch:    "The password fields must match"
+user_submit:               "Create user"
+
+# Password reset request form
+user_reset_password_request_username: "Username:"
+user_reset_password_request_submit:   "Reset password"
+
+# Password reset form
+resetpassword_newPassword_first:  "Password:"
+resetpassword_newPassword_second: "Repeat:"
+resetpassword_newPassword_submit: "Reset password"
+
+# Email notifications
+user_email_confirmation: |
+    Welcome %username%!
+    Hello %username%, thank you for taking the time to create a new account!
+
+    In order to use your account, you must first verify that you received this e-mail.  To do that, simply visit %confirmationUrl%
+
+    Thanks,
+    <your site name here>
+
+user_email_resetting_password: |
+    Password reset request for %username%
+    Someone claiming to be %username% has requested a password reset for the account.  If you did not make this request, it could be that someone is trying to access your account.
+    However, if you did make this request, you can proceed with resetting your password by visiting %confirmationUrl%
+
+    Please note that the above link is only valid for 24 hours from the time that it was sent.
+
+    Thanks,
+    <your site name here>
+
+# Account confirmed
+user_account_active: Congratulations %username%, your account is now active!

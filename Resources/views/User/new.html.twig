@@ -1,0 +1,12 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% form_theme form 'EpicoftimewastedUserBundle:Form:user.html.twig' %}
+
+{% block content %}
+<form action="{{ path('epicoftimewasted_user_user_new') }}" method="POST">
+	<div id="userForm">
+		{{ form_widget(form) }}
+		<button type="submit">{{ 'user_submit'|trans([], 'EpicoftimewastedUserBundle') }}</button>
+	</div>
+</form>
+{% endblock %}

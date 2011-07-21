@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="epicoftimewasted_user.mailer.default" class="Epicoftimewasted\UserBundle\Mailer\SwiftMailer" public="false">
+            <argument type="service" id="mailer" />
+            <argument type="service" id="router" />
+            <argument type="service" id="templating" />
+            <argument type="collection">
+                <argument key="confirmation.template">%epicoftimewasted_user.email.confirmation.template%</argument>
+                <argument key="resetting_password.template">%epicoftimewasted_user.email.resetting_password.template%</argument>
+                <argument key="from_email">%epicoftimewasted_user.email.from_email%</argument>
+            </argument>
+        </service>
+
+        <service id="epicoftimewasted_user.mailer.noop" class="Epicoftimewasted\UserBundle\Mailer\NoopMailer" public="false" />
+    </services>
+
+</container>

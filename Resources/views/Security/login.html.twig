@@ -1,0 +1,19 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% block content %}
+<form action="{{ path("_security_check") }}" method="post">
+	<div id="userForm">
+{% if error %}
+		<div class="note"><h1>{{ error|trans([], 'EpicoftimewastedUserBundle') }}</h1></div>
+{% endif %}
+		<div class="label"><label for="username">{{ 'login_username'|trans([], 'EpicoftimewastedUserBundle') }}</label></div>
+		<div class="content"><input type="text" id="username" name="_username" value="{{ last_username }}" autofocus="autofocus" /></div>
+		<div class="label"><label for="password">{{ 'login_password'|trans([], 'EpicoftimewastedUserBundle') }}</label></div>
+		<div class="content"><input type="password" id="password" name="_password" /></div>
+		<div class="note">{{ 'login_password_notice'|trans([], 'EpicoftimewastedUserBundle') }}</div>
+		<div class="note"><a href="{{ path('epicoftimewasted_user_user_reset_password_request') }}">{{ 'login_forgot_password'|trans([], 'EpicoftimewastedUserBundle') }}</a></div>
+		<input type="hidden" id="remember_me" name="_remember_me" value="on" />
+		<button type="submit">{{ 'login_login'|trans([], 'EpicoftimewastedUserBundle') }}</button>
+	</div>
+</form>
+{% endblock %}

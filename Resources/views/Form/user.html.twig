@@ -1,0 +1,45 @@
+{% extends "TwigBundle:Form:div_layout.html.twig" %}
+
+{% block form_widget %}
+{% spaceless %}
+	{{ block('field_rows') }}
+	{{ form_rest(form) }}
+{% endspaceless %}
+{% endblock form_widget %}
+
+{% block field_row %}
+{% spaceless %}
+	{{ form_label(form) }}
+	<div class="content">
+		{{ form_widget(form) }}
+	</div>
+	{{ form_errors(form) }}
+{% endspaceless %}
+{% endblock field_row %}
+
+{% block field_errors %}
+{% spaceless %}
+	{% for error in errors %}
+	{% if error.messageTemplate == 'The value is invalid' %}
+	<div class="note">{{ 'user_password_mismatch'|trans([], 'EpicoftimewastedUserBundle') }}</div>
+	{% else %}
+	<div class="note">{{ error.messageTemplate|trans(error.messageParameters, 'validators') }}</div>
+	{% endif %}
+	{% endfor %}
+{% endspaceless %}
+{% endblock field_errors %}
+
+{% block field_label %}
+{% spaceless %}
+	<div class="label"><label for="{{ id }}">{{ id|trans([], 'EpicoftimewastedUserBundle') }}</label></div>
+{% endspaceless %}
+{% endblock field_label %}
+
+{% block repeated_row %}
+{% spaceless %}
+	{% for child in form.children %}
+		{{ form_row(child) }}
+	{% endfor %}
+	{{ form_errors(form) }}
+{% endspaceless %}
+{% endblock repeated_row %}

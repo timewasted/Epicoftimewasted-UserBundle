@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="epicoftimewasted_user.user_manager.class">Epicoftimewasted\UserBundle\Entity\UserManager</parameter>
+    </parameters>
+
+    <services>
+        <service id="epicoftimewasted_user.user_manager" class="%epicoftimewasted_user.user_manager.class%">
+            <argument type="service" id="security.encoder_factory" />
+            <argument>%epicoftimewasted_user.encoder.algorithm%</argument>
+            <argument>%epicoftimewasted_user.encoder.work_factor%</argument>
+            <argument type="service" id="epicoftimewasted_user.util.username_canonicalizer" />
+            <argument type="service" id="epicoftimewasted_user.util.email_canonicalizer" />
+            <argument type="service" id="crypto.crypto_manager" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%epicoftimewasted_user.model.user.class%</argument>
+        </service>
+
+        <service id="epicoftimewasted_user.user_listener" class="Epicoftimewasted\UserBundle\Entity\UserListener" public="false">
+            <argument type="service" id="service_container" />
+        </service>
+    </services>
+
+</container>

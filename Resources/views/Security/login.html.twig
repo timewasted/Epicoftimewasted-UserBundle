@@ -12,6 +12,9 @@
 		<div class="content"><input type="password" id="password" name="_password" /></div>
 		<div class="note">{{ 'login_password_notice'|trans([], 'EpicoftimewastedUserBundle') }}</div>
 		<div class="note"><a href="{{ path('epicoftimewasted_user_user_reset_password_request') }}">{{ 'login_forgot_password'|trans([], 'EpicoftimewastedUserBundle') }}</a></div>
+{% if referer is not null %}
+		<input type="hidden" id="target_path" name="_target_path" value="{{ referer }}" />
+{% endif %}
 		<input type="hidden" id="remember_me" name="_remember_me" value="on" />
 		<button type="submit">{{ 'login_login'|trans([], 'EpicoftimewastedUserBundle') }}</button>
 	</div>

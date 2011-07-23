@@ -23,8 +23,10 @@ class SecurityController extends Controller
 		if( $error !== null )
 			$error = 'login_authentication_failed';
 
+		$referer = $this->get('request')->headers->get('Referer');
 		$response = $this->render('EpicoftimewastedUserBundle:Security:login.html.twig', array(
 			'error' => $error,
+			'referer' => empty($referer) ? null : $referer,
 			'last_username' => null,
 //			'last_username' => $this->container->get('request')->getSession()->get(SecurityContext::LAST_USERNAME),
 		));

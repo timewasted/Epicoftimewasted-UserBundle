@@ -11,4 +11,9 @@ class ResetPasswordFormType extends AbstractType
 	{
 		$builder->add('newPassword', 'repeated', array('type' => 'password'));
 	}
+
+	public function getName()
+	{
+		return 'resetpasswordform';
+	}
 }

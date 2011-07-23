@@ -7,12 +7,12 @@ login_login:                 "Login"
 login_authentication_failed: "Authentication failed"
 
 # User form
-user_username:             "Username:"
-user_email:                "E-mail:"
-user_plainPassword_first:  "Password:"
-user_plainPassword_second: "Repeat:"
-user_password_mismatch:    "The password fields must match"
-user_submit:               "Create user"
+userform_username:             "Username:"
+userform_email:                "E-mail:"
+userform_plainPassword_first:  "Password:"
+userform_plainPassword_second: "Repeat:"
+userform_password_mismatch:    "The password fields must match"
+userform_submit:               "Create user"
 
 # Password reset request form
 user_reset_password_request_username: "Username:"

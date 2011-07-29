@@ -77,7 +77,7 @@ class UserController extends Controller
 		$captchaEnabled = $this->container->getParameter('epicoftimewasted_user.captcha.enabled');
 		$captchaPrivateKey = $this->container->getParameter('epicoftimewasted_user.captcha.private_key');
 
-		return $captchaEnabled ? recaptcha_check_answer($captchaPrivateKey, $request->getClientIp(true), $request->get('recaptcha_challenge_field'), $request->get('recaptcha_response_field'))->is_valid : false;
+		return $captchaEnabled ? recaptcha_check_answer($captchaPrivateKey, $request->getClientIp(true), $request->get('recaptcha_challenge_field'), $request->get('recaptcha_response_field'))->is_valid : true;
 	}
 
 	/**

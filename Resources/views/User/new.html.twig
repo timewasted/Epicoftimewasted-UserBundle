@@ -7,7 +7,9 @@
 	<div id="userForm">
 		{{ form_widget(form) }}
 {% if captcha is not null %}
-		{{ captcha|raw }}
+		<div id="captcha">
+			{{ captcha|raw }}
+		</div>
 {% endif %}
 		<button type="submit">{{ 'userform_submit'|trans([], 'EpicoftimewastedUserBundle') }}</button>
 	</div>

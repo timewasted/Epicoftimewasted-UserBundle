@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
 		$this->addFormNameSection($rootNode);
 		$this->addRoutesSection($rootNode);
 		$this->addServiceSection($rootNode);
+		$this->addCaptchaSection($rootNode);
 
 		return $treeBuilder;
 	}
@@ -166,6 +167,20 @@ class Configuration implements ConfigurationInterface
 						->scalarNode('email_canonicalizer')->defaultValue('epicoftimewasted_user.util.email_canonicalizer.default')->end()
 						->scalarNode('username_canonicalizer')->defaultValue('epicoftimewasted_user.util.username_canonicalizer.default')->end()
 					->end()
+				->end()
+			->end();
+	}
+
+	private function addCaptchaSection(ArrayNodeDefinition $node)
+	{
+		$node
+			->children()
+				->arrayNode('captcha')
+				->addDefaultsIfNotSet()
+				->children()
+					->booleanNode('enabled')->defaultFalse()->end()
+					->scalarNode('public_key')->defaultNull()->cannotBeEmpty()->end()
+					->scalarNode('private_key')->defaultNull()->cannotBeEmpty()->end()
 				->end()
 			->end();
 	}

@@ -6,6 +6,9 @@
 <form action="{{ path('epicoftimewasted_user_user_new') }}" method="POST">
 	<div id="userForm">
 		{{ form_widget(form) }}
+{% if captcha is not null %}
+		{{ captcha|raw }}
+{% endif %}
 		<button type="submit">{{ 'userform_submit'|trans([], 'EpicoftimewastedUserBundle') }}</button>
 	</div>
 </form>

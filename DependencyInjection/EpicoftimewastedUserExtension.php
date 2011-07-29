@@ -46,6 +46,9 @@ class EpicoftimewastedUserExtension extends Extension
 			}
 		}
 
+		if( $config['captcha']['enabled'] && ($config['captcha']['public_key'] === null || $config['captcha']['private_key'] === null) )
+			throw new \InvalidArgumentException('Captcha requires a valid public_key and private_key.');
+
 		$this->remapParametersNamespaces($config, $container, array(
 			'' => array(
 				'firewall_name' => 'epicoftimewasted_user.firewall_name',
@@ -70,6 +73,14 @@ class EpicoftimewastedUserExtension extends Extension
 		$this->remapParametersNamespaces($config['routes'], $container, array(
 			'' => array(
 				'account_active' => 'epicoftimewasted_user.routes.account_active',
+			),
+		));
+
+		$this->remapParametersNamespaces($config['captcha'], $container, array(
+			'' => array(
+				'enabled'		=> 'epicoftimewasted_user.captcha.enabled',
+				'public_key'	=> 'epicoftimewasted_user.captcha.public_key',
+				'private_key'	=> 'epicoftimewasted_user.captcha.private_key',
 			),
 		));
 /*

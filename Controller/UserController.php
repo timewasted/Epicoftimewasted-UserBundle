@@ -15,9 +15,12 @@ use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
+require __DIR__ . '/../Captcha/recaptchalib.php';
 
 class UserController extends Controller
 {
@@ -51,44 +54,99 @@ class UserController extends Controller
 	}
 
 	/**
+	 * If the use of a captcha is enabled, return the HTML required to display
+	 * the captcha.  If the captcha is disabled, return null.
+	 *
+	 * @return string|null
+	 */
+	protected function generateCaptcha()
+	{
+		$captchaEnabled = $this->container->getParameter('epicoftimewasted_user.captcha.enabled');
+		return $captchaEnabled ? recaptcha_get_html($this->container->getParameter('epicoftimewasted_user.captcha.public_key'), null, true) : null;
+	}
+
+	/**
+	 * Checks to see if the submitted captcha answer is valid.
+	 * This returns true if the captcha is disabled, or it's valid.
+	 *
+	 * @param Request $request
+	 * @return boolean
+	 */
+	protected function isCaptchaValid(Request $request)
+	{
+		$captchaEnabled = $this->container->getParameter('epicoftimewasted_user.captcha.enabled');
+		$captchaPrivateKey = $this->container->getParameter('epicoftimewasted_user.captcha.private_key');
+		if( !$captchaEnabled || recaptcha_check_answer($captchaPrivateKey, $request->getClientIp(true), $request->get('recaptcha_challenge_field'), $request->get('recaptcha_response_field')) )
+			return true;
+		return false;
+	}
+
+	/**
 	 * Display the new user form, and process the submitted information.
 	 *
 	 * @Route("/new/", name="epicoftimewasted_user_user_new", requirements={"_method"="GET|POST", "_scheme"="https"})
 	 */
 	public function newAction()
 	{
-		if( $this->isUserLoggedIn() )
-			return $this->render('EpicoftimewastedUserBundle:User:new_already_logged_in.html.twig');
-
-		$form = $this->get('epicoftimewasted_user.form.user');
-		$formHandler = $this->get('epicoftimewasted_user.form.handler.user');
-
-		$process = $formHandler->process(null, $this->container->getParameter('epicoftimewasted_user.email.confirmation.enabled'));
-		if( $process ) {
-			$user = $form->getData();
-			if( $this->container->getParameter('epicoftimewasted_user.email.confirmation.enabled') ) {
-				// Since we require confirmation, send the user an e-mail.
-				$this->get('epicoftimewasted_user.mailer')->sendConfirmationEmail($user);
-				$this->get('session')->set('epicoftimewasted_user_user_check_email/reason', 'confirm');
-				$this->get('session')->set('epicoftimewasted_user_user_check_email/email', $user->getEmail());
-				$route = 'epicoftimewasted_user_user_check_email';
-			} else {
-				// Since we don't require confirmation, authenticate the user.
-				$this->authenticateUser($user);
-				$route = $this->container->getParameter('epicoftimewasted_user.routes.account_active');
-			}
-
-// FIXME: Implement ACL stuff.
-//			$this->get('fos_user.user_creator')->createAcl($user);
-			return new RedirectResponse($this->generateUrl($route));
+		/**
+		 * Logged in users can not create a new user.
+		 */
+		if( $this->isUserLoggedIn() ) {
+			$response = $this->render('EpicoftimewastedUserBundle:User:new_already_logged_in.html.twig');
+			$response->setPrivate();
+			$response->setMaxAge(0);
+			return $response;
 		}
 
-		// FIXME: Implement throttling on creating new users.
+		$form = $this->get('epicoftimewasted_user.form.user');
+
+		$request = $this->get('request');
+		if( $request->getMethod() === 'POST' ) {
+			/**
+			 * Before trying to process the user creation request, verify that
+			 * the captcha, if enabled, is valid.
+			 */
+			if( $this->isCaptchaValid($request) ) {
+				$form->bindRequest($request);
+				if( $form->isValid() ) {
+					$user = $form->getData();
+					/**
+					 * Handle the user's account, based on config parameters.
+					 */
+					if( $this->container->getParameter('epicoftimewasted_user.email.confirmation.enabled') ) {
+						// Since we require confirmation, send the user an e-mail.
+						$user->setAccountEnabled(false);
+						$this->get('epicoftimewasted_user.mailer')->sendConfirmationEmail($user);
+						$this->get('session')->set('epicoftimewasted_user_user_check_email/reason', 'confirm');
+						$this->get('session')->set('epicoftimewasted_user_user_check_email/email', $user->getEmail());
+						$route = 'epicoftimewasted_user_user_check_email';
+					} else {
+						// Since we don't require confirmation, authenticate the user.
+						$user->setAccountEnabled(true);
+						$user->removeConfirmationToken();
+						$user->setLastLogin(new \DateTime());
+						$this->authenticateUser($user);
+						$route = $this->container->getParameter('epicoftimewasted_user.routes.account_active');
+					}
+
+					/**
+					 * Update the user and redirect them to their destination.
+					 */
+					$this->get('epicoftimewasted_user.user_manager')->updateUser($user);
+					return new RedirectResponse($this->generateUrl($route));
+				}
+			}
+		}
+
+		/**
+		 * Display the user registration form.
+		 */
 		$response = $this->render('EpicoftimewastedUserBundle:User:new.html.twig', array(
 			'form' => $form->createView(),
+			'captcha' => $this->generateCaptcha(),
 		));
-		// Because this can contain user information, set the cache to private.
 		$response->setPrivate();
+		$response->setMaxAge(0);
 		return $response;
 	}
 
@@ -107,8 +165,12 @@ class UserController extends Controller
 		$this->get('session')->remove('epicoftimewasted_user_user_check_email/reason');
 
 		// Password resets just require rendering a template.
-		if( $reason === 'reset' )
-			return $this->render('EpicoftimewastedUserBundle:User:resetting_password_email_sent.html.twig');
+		if( $reason === 'reset' ) {
+			$response = $this->render('EpicoftimewastedUserBundle:User:resetting_password_email_sent.html.twig');
+			$response->setPrivate();
+			$response->setMaxAge(0);
+			return $response;
+		}
 
 		// Get the e-mail address from the session and try to find an account.
 		$email = $this->get('session')->get('epicoftimewasted_user_user_check_email/email');
@@ -125,6 +187,7 @@ class UserController extends Controller
 		));
 		// Because this contains user information, set the cache to private.
 		$response->setPrivate();
+		$response->setMaxAge(0);
 		return $response;
 	}
 
@@ -135,8 +198,12 @@ class UserController extends Controller
 	 */
 	public function confirmAccountAction($token)
 	{
-		if( $this->isUserLoggedIn() )
-			return $this->render('EpicoftimewastedUserBundle:User:confirm_already_logged_in.html.twig');
+		if( $this->isUserLoggedIn() ) {
+			$response = $this->render('EpicoftimewastedUserBundle:User:confirm_already_logged_in.html.twig');
+			$response->setPrivate();
+			$response->setMaxAge(0);
+			return $response;
+		}
 
 		$user = $this->get('epicoftimewasted_user.user_manager')->findUserByConfirmationToken($token);
 		if( $user === null )
@@ -163,9 +230,12 @@ class UserController extends Controller
 			throw new HttpException(403, 'This page is meant for people with a valid, active account.');
 
 		$user = $this->get('security.context')->getToken()->getUser();
-		return $this->render('EpicoftimewastedUserBundle:User:account_active.html.twig', array(
+		$response = $this->render('EpicoftimewastedUserBundle:User:account_active.html.twig', array(
 			'user' => $user,
 		));
+		$response->setPrivate();
+		$response->setMaxAge(0);
+		return $response;
 	}
 
 	/**
@@ -175,30 +245,48 @@ class UserController extends Controller
 	 */
 	public function resetPasswordRequestAction()
 	{
-		if( $this->get('request')->getMethod() === 'POST' ) {
-			$user = $this->get('epicoftimewasted_user.user_manager')->findUserByUsername($this->get('request')->get('username'));
-			/*
-				For the sake of preventing information disclosure, such as a
-				list of current accounts on the system, we will not notify a
-				user if the given username isn't valid.  While this is not
-				ideal from a usability perspective, it is ideal from a security
-				perspective.
-			*/
-			if( $user !== null && !$user->isPasswordRequestNonExpired($this->container->getParameter('epicoftimewasted_user.email.resetting_password.token_ttl')) ) {
-				$this->get('epicoftimewasted_user.user_manager')->createConfirmationToken($user);
-				$this->get('epicoftimewasted_user.mailer')->sendResettingPasswordEmail($user);
-				$user->setPasswordRequestedAt(new \DateTime());
-				$this->get('epicoftimewasted_user.user_manager')->updateUser($user);
-			}
+		$request = $this->get('request');
+		if( $request->getMethod() === 'POST' ) {
+			/**
+			 * Before trying to process the password reset request, verify that
+			 * the captcha, if enabled, is valid.
+			 */
+			if( $this->isCaptchaValid($request) ) {
+				$user = $this->get('epicoftimewasted_user.user_manager')->findUserByUsername($request->get('username'));
+				/**
+				 * For the sake of preventing information disclosure, such as
+				 * a list of current accounts on the system, we will not notify
+				 * a user if the given username isn't valid.  While this is not
+				 * ideal from a usability perspective, it is ideal from a
+				 * security perspective.
+				 */
+				if( $user !== null && !$user->isPasswordRequestNonExpired($this->container->getParameter('epicoftimewasted_user.email.resetting_password.token_ttl')) ) {
+					/**
+					 * The user requests and is able to request a reset.  Send
+					 * an e-mail explaining how to reset the password.
+					 */
+					$this->get('epicoftimewasted_user.user_manager')->createConfirmationToken($user);
+					$this->get('epicoftimewasted_user.mailer')->sendResettingPasswordEmail($user);
+					$user->setPasswordRequestedAt(new \DateTime());
+					$this->get('epicoftimewasted_user.user_manager')->updateUser($user);
+				}
 
-			$this->get('session')->set('epicoftimewasted_user_user_check_email/reason', 'reset');
-			return new RedirectResponse($this->generateUrl('epicoftimewasted_user_user_check_email'));
+				$this->get('session')->set('epicoftimewasted_user_user_check_email/reason', 'reset');
+				return new RedirectResponse($this->generateUrl('epicoftimewasted_user_user_check_email'));
+			}
 		}
 
+		/**
+		 * Display the password reset request form.
+		 */
 		$username = $this->isUserLoggedIn() ? $this->get('security.context')->getToken()->getUsername() : null;
-		return $this->render('EpicoftimewastedUserBundle:User:reset_password_request.html.twig', array(
+		$response = $this->render('EpicoftimewastedUserBundle:User:reset_password_request.html.twig', array(
 			'username' => $username,
+			'captcha' => $this->generateCaptcha(),
 		));
+		$response->setPrivate();
+		$response->setMaxAge(0);
+		return $response;
 	}
 
 	/**
@@ -219,9 +307,12 @@ class UserController extends Controller
 			return new RedirectResponse($this->generateUrl($route));
 		}
 
-		return $this->render('EpicoftimewastedUserBundle:User:reset_password.html.twig', array(
+		$response = $this->render('EpicoftimewastedUserBundle:User:reset_password.html.twig', array(
 			'token' => $token,
 			'form' => $form->createView(),
 		));
+		$response->setPrivate();
+		$response->setMaxAge(0);
+		return $response;
 	}
 }

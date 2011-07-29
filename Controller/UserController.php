@@ -98,6 +98,9 @@ class UserController extends Controller
 		}
 
 		$form = $this->get('epicoftimewasted_user.form.user');
+		$userManager = $this->get('epicoftimewasted_user.user_manager');
+		$user = $userManager->createUser();
+		$form->setData($user);
 
 		$request = $this->get('request');
 		if( $request->getMethod() === 'POST' ) {
@@ -131,7 +134,7 @@ class UserController extends Controller
 					/**
 					 * Update the user and redirect them to their destination.
 					 */
-					$this->get('epicoftimewasted_user.user_manager')->updateUser($user);
+					$userManager->updateUser($user);
 					return new RedirectResponse($this->generateUrl($route));
 				}
 			}

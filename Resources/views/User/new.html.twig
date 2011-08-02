@@ -4,7 +4,7 @@
 
 {% block content %}
 <form action="{{ path('epicoftimewasted_user_user_new') }}" method="POST">
-	<div id="userForm">
+	<div id="userForm" class="twoColumn">
 		{{ form_widget(form) }}
 {% if captcha is not null %}
 		<div id="captcha">

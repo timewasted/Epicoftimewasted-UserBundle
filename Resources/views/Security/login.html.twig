@@ -2,7 +2,7 @@
 
 {% block content %}
 <form action="{{ path("_security_check") }}" method="post">
-	<div id="userForm">
+	<div id="userForm" class="twoColumn">
 {% if error %}
 		<div class="note"><h1>{{ error|trans([], 'EpicoftimewastedUserBundle') }}</h1></div>
 {% endif %}

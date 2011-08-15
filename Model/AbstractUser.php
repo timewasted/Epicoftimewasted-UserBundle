@@ -3,9 +3,9 @@
 namespace Epicoftimewasted\UserBundle\Model;
 
 //use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 
-abstract class AbstractUser implements EpicoftimewastedUserInterface
+abstract class AbstractUser implements UserInterface
 {
 	const DEFAULT_ROLE = 'ROLE_USER';
 
@@ -146,11 +146,11 @@ abstract class AbstractUser implements EpicoftimewastedUserInterface
 	}
 
 	/**
-	 * Implements UserInterface
+	 * Implements SecurityUserInterface
 	 *
 	 * {@inheritDoc}
 	 */
-	public function equals(UserInterface $user)
+	public function equals(SecurityUserInterface $user)
 	{
 		if( !$user instanceof User )
 			return false;
@@ -171,7 +171,7 @@ abstract class AbstractUser implements EpicoftimewastedUserInterface
 	}
 
 	/**
-	 * Implements UserInterface
+	 * Implements SecurityUserInterface
 	 *
 	 * {@inheritDoc}
 	 */
@@ -181,7 +181,17 @@ abstract class AbstractUser implements EpicoftimewastedUserInterface
 	}
 
 	/**
-	 * Implements UserInterface
+	 * Returns the unique user id.
+	 *
+	 * @return mixed
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * Implements SecurityUserInterface
 	 *
 	 * {@inheritDoc}
 	 */
@@ -215,7 +225,7 @@ abstract class AbstractUser implements EpicoftimewastedUserInterface
 	}
 
 	/**
-	 * Implements UserInterface
+	 * Implements SecurityUserInterface
 	 *
 	 * {@inheritDoc}
 	 */
@@ -235,7 +245,7 @@ abstract class AbstractUser implements EpicoftimewastedUserInterface
 	}
 
 	/**
-	 * Implements UserInterface
+	 * Implements SecurityUserInterface
 	 *
 	 * {@inheritDoc}
 	 */
@@ -554,5 +564,55 @@ abstract class AbstractUser implements EpicoftimewastedUserInterface
 	public function setAccountLockedUntil($time)
 	{
 		$this->accountLockedUntil = $time;
+	}
+
+	/**
+	 * Checks if the given user is this user.
+	 *
+	 * @param UserInterface $user
+	 * return boolean
+	 */
+	public function isUser(UserInterface $user = null)
+	{
+		return $user !== null && $this->getId() === $user->getId();
+	}
+
+	/**
+	 * Serialize the user.  The serialized data must contain the fields used by
+	 * the equals() method, along with the username.
+	 *
+	 * @return string
+	 */
+	public function serialize()
+	{
+		return serialize(array(
+			$this->password,
+			$this->salt,
+			$this->usernameCanonical,
+			$this->username,
+			$this->accountExpiresAt,
+			$this->accountLocked,
+			$this->credentialsExpireAt,
+			$this->accountEnabled,
+		));
+	}
+
+	/**
+	 * Unserialize the user.
+	 *
+	 * @param string $serialized
+	 */
+	public function unserialize($serialized)
+	{
+		list(
+			$this->password,
+			$this->salt,
+			$this->usernameCanonical,
+			$this->username,
+			$this->accountExpiresAt,
+			$this->accountLocked,
+			$this->credentialsExpireAt,
+			$this->accountEnabled,
+		) = unserialize($serialized);
 	}
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="epicoftimewasted_user.captcha.class">Epicoftimewasted\UserBundle\Captcha\Recaptcha</parameter>
+    </parameters>
+
+    <services>
+        <service id="epicoftimewasted_user.captcha" class="%epicoftimewasted_user.captcha.class%" scope="request">
+            <file>%kernel.root_dir%/../src/Epicoftimewasted/UserBundle/Captcha/recaptchalib.php</file>
+            <argument type="service" id="request" />
+            <argument>%epicoftimewasted_user.captcha.enabled%</argument>
+            <argument>%epicoftimewasted_user.captcha.public_key%</argument>
+            <argument>%epicoftimewasted_user.captcha.private_key%</argument>
+        </service>
+    </services>
+
+</container>

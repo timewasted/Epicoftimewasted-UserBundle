@@ -1,13 +1,14 @@
 <?php
 
-namespace Epicoftimewasted\UserBundle\Form;
+namespace Epicoftimewasted\UserBundle\Form\Handler;
 
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Form\Model\ResetPassword;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Epicoftimewasted\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserFormHandler
+class ResettingFormHandler
 {
 	/**
 	 * @var Form $form
@@ -39,34 +40,36 @@ class UserFormHandler
 	}
 
 	/**
-	 * @param EpicoftimewastedUserInterface $user
-	 * @param boolean $confirmation
-	 * @return boolean
+	 * Get the new password.
+	 *
+	 * @return string
 	 */
-	public function process(EpicoftimewastedUserInterface $user = null, $confirmation = null)
+	public function getNewPassword()
 	{
-		if( $user === null )
-			$user = $this->userManager->createUser();
+		return $this->form->getData()->newPassword;
+	}
 
-		$this->form->setData($user);
+	public function process(UserInterface $user)
+	{
+		$this->form->setData(new ResetPassword());
 
 		if( $this->request->getMethod() === 'POST' ) {
 			$this->form->bindRequest($this->request);
 
 			if( $this->form->isValid() ) {
-				if( $confirmation === true ) {
-					$user->setAccountEnabled(false);
-				} elseif( $confirmation === false ) {
-					$user->removeConfirmationToken();
-					$user->setAccountEnabled(true);
-					$user->setLastLogin(new \DateTime());
-				}
-
-				$this->userManager->updateUser($user);
+				$this->onSuccess($user);
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	protected function onSuccess(UserInterface $user)
+	{
+		$user->setPlainPassword($this->getNewPassword());
+		$user->removeConfirmationToken();
+		$user->setAccountEnabled(true);
+		$this->userManager->updateUser($user);
 	}
 }

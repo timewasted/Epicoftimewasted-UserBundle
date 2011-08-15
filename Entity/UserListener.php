@@ -6,7 +6,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserListener implements EventSubscriber
@@ -55,7 +55,7 @@ class UserListener implements EventSubscriber
 			$this->userManager = $this->container->get('epicoftimewasted_user.user_manager');
 
 		$entity = $args->getEntity();
-		if( $entity instanceof EpicoftimewastedUserInterface ) {
+		if( $entity instanceof UserInterface ) {
 			$this->userManager->updateCanonicalFields($entity);
 			$this->userManager->updatePassword($entity);
 		}

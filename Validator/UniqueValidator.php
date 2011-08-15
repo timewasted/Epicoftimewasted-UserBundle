@@ -23,12 +23,39 @@ class UniqueValidator extends ConstraintValidator
 		$this->userManager = $userManager;
 	}
 
+	/**
+	 * Set the user manager.
+	 *
+	 * @param UserManagerInterface $userManager
+	 */
+	public function setUserManager(UserManagerInterface $userManager)
+	{
+		$this->userManager = $userManager;
+	}
+
+	/**
+	 * Get the user manager.
+	 *
+	 * @return UserManagerInterface
+	 */
+	public function getUserManager()
+	{
+		return $this->userManager;
+	}
+
+	/**
+	 * Indicates whether the constraint is valid or not.
+	 *
+	 * @param Entity $value
+	 * @param Constraint $constraint
+	 */
 	public function isValid($value, Constraint $constraint)
 	{
-		if( !$this->userManager->validateUnique($value, $constraint) ) {
+		if( !$this->getUserManager()->validateUnique($value, $constraint) ) {
 			$this->setMessage($constraint->message);
 			return false;
 		}
+
 		return true;
 	}
 }

@@ -20,128 +20,122 @@ class EpicoftimewastedUserExtension extends Extension
 		$loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
 		$config['db_driver'] = strtolower($config['db_driver']);
-//		if( !in_array($config['db_driver'], array('orm', 'mongodb')) )
 		if( $config['db_driver'] !== 'orm' )
-			throw new \InvalidArgumentException(sprintf('Invalid database driver "%s".  Currently only "orm" is supported.', $config['db_driver']));
+			throw new \InvalidArgumentException(sprintf('Invalid database driver "%s".', $config['db_driver']));
 		$loader->load(sprintf('%s.xml', $config['db_driver']));
 
-//		foreach( array('services', 'controller', 'form', 'validator', 'security', 'util', 'mailer', 'listener') as $baseName )
-		foreach( array('controller', 'form', 'validator', 'security', 'util', 'mailer', 'listener') as $baseName )
+		foreach( array('mailer', 'security', 'util', 'validator') as $baseName )
 			$loader->load(sprintf('%s.xml', $baseName));
 
 		$container->setAlias('epicoftimewasted_user.mailer', $config['service']['mailer']);
 		$container->setAlias('epicoftimewasted_user.util.email_canonicalizer', $config['service']['email_canonicalizer']);
 		$container->setAlias('epicoftimewasted_user.util.username_canonicalizer', $config['service']['username_canonicalizer']);
+		$container->setAlias('epicoftimewasted_user.user_manager', $config['service']['user_manager']);
 
 		if( $config['use_listener'] ) {
-			switch($config['db_driver']) {
+			switch( $config['db_driver'] ) {
 				case 'orm':
 					$container->getDefinition('epicoftimewasted_user.user_listener')->addTag('doctrine.event_subscriber');
 					break;
-/*
-				case 'mongodb':
-					$container->getDefinition('epicoftimewasted_user.user_listener')->addTag('doctrine.common.event_subscriber');
+				default:
 					break;
-*/
 			}
 		}
 
-		if( $config['captcha']['enabled'] && ($config['captcha']['public_key'] === null || $config['captcha']['private_key'] === null) )
-			throw new \InvalidArgumentException('Captcha requires a valid public_key and private_key.');
+		if( $config['use_username_form_type'] )
+			$loader->load('username_form_type.xml');
 
 		$this->remapParametersNamespaces($config, $container, array(
 			'' => array(
-				'firewall_name' => 'epicoftimewasted_user.firewall_name',
+				'firewall_name'			=> 'epicoftimewasted_user.firewall_name',
+				'model_manager_name'	=> 'epicoftimewasted_user.model_manager_name',
+				'user_class'			=> 'epicoftimewasted_user.model.user.class',
 			),
 			'encoder'	=> 'epicoftimewasted_user.encoder.%s',
-			'form_name'	=> 'epicoftimewasted_user.form.%s.name',
 		));
+		$container->setParameter(
+			'epicoftimewasted_user.confirmation.from_email',
+			array($config['from_email']['address'] => $config['from_email']['sender_name'])
+		);
+		$container->setParameter(
+			'epicoftimewasted_user.resetting.email.from_email',
+			array($config['from_email']['address'] => $config['from_email']['sender_name'])
+		);
 
-		$this->remapParametersNamespaces($config['class'], $container, array(
-			'model'			=> 'epicoftimewasted_user.model.%s.class',
-			'form'			=> 'epicoftimewasted_user.form.type.%s.class',
-			'form_handler'	=> 'epicoftimewasted_user.form.handler.%s.class',
-			'controller'	=> 'epicoftimewasted_user.controller.%s.class',
-		));
+		if( !empty($config['registration']) ) {
+			$loader->load('registration.xml');
 
-		$this->remapParametersNamespaces($config['email'], $container, array(
-			''						=> array('from_email' => 'epicoftimewasted_user.email.from_email'),
-			'confirmation'			=> 'epicoftimewasted_user.email.confirmation.%s',
-			'resetting_password'	=> 'epicoftimewasted_user.email.resetting_password.%s',
-		));
+			$container->setAlias('epicoftimewasted_user.registration.form.handler', $config['registration']['form']['handler']);
+			unset($config['registration']['form']['handler']);
 
-		$this->remapParametersNamespaces($config['routes'], $container, array(
-			'' => array(
-				'account_active' => 'epicoftimewasted_user.routes.account_active',
-			),
-		));
+			if( !empty($config['registration']['confirmation']['from_email']) ) {
+				$container->setParameter(
+					'epicoftimewasted_user.registration.confirmation.from_email',
+					array($config['registration']['confirmation']['from_email']['address'] => $config['registration']['confirmation']['from_email']['sender_name'])
+				);
+			}
+			unset($config['registration']['confirmation']['from_email']);
 
-		$this->remapParametersNamespaces($config['captcha'], $container, array(
-			'' => array(
-				'enabled'		=> 'epicoftimewasted_user.captcha.enabled',
-				'public_key'	=> 'epicoftimewasted_user.captcha.public_key',
-				'private_key'	=> 'epicoftimewasted_user.captcha.private_key',
-			),
-		));
+			$this->remapParametersNamespaces($config['registration'], $container, array(
+				'confirmation'	=> 'epicoftimewasted_user.registration.confirmation.%s',
+				'form'			=> 'epicoftimewasted_user.registration.form.%s',
+			));
+		}
 /*
-		$container->setAlias('fos_user.mailer', $config['service']['mailer']);
-		$container->setAlias('fos_user.util.email_canonicalizer', $config['service']['email_canonicalizer']);
-		$container->setAlias('fos_user.util.username_canonicalizer', $config['service']['username_canonicalizer']);
+		if( !empty($config['change_password']) ) {
+			$loader->load('change_password.xml');
 
-		if( !empty($config['group']) ) {
-			$loader->load('group.xml');
-			$loader->load(sprintf('%s_group.xml', $config['db_driver']));
-			$this->remapParametersNamespaces($config['group'], $container, array(
-				'class'							=> 'fos_user.%s.group.class',
+			$container->setAlias('epicoftimewasted_user.change_password.form.handler', $config['change_password']['form']['handler']);
+			unset($config['change_password']['form']['handler']);
+
+			$this->remapParametersNamespaces($config['change_password'], $container, array(
+				'form' => 'epicoftimewasted_user.change_password.form.%s',
+			));
+		}
+*/
+		if( !empty($config['resetting']) ) {
+			$loader->load('resetting.xml');
+
+			$container->setAlias('epicoftimewasted_user.resetting.form.handler', $config['resetting']['form']['handler']);
+			unset($config['resetting']['form']['handler']);
+
+			if( !empty($config['resetting']['email']['from_email']) ) {
+				$container->setParameter(
+					'epicoftimewasted_user.resetting.email.from_email',
+					array($config['resetting']['email']['from_email']['address'] => $config['resetting']['email']['from_email']['sender_name'])
+				);
+			}
+			unset($config['resetting']['email']['from_email']);
+
+			$this->remapParametersNamespaces($config['resetting'], $container, array(
 				'' => array(
-					'form'						=> 'fos_user.form.type.group.class',
-					'form_handler'				=> 'fos_user.form.handler.group.class',
-					'form_name'					=> 'fos_user.form.group.name',
-					'form_validation_groups'	=> 'fos_user.form.group.validation_groups',
+					'token_ttl' => 'epicoftimewasted_user.resetting.token_ttl',
 				),
+				'email'	=> 'epicoftimewasted_user.resetting.email.%s',
+				'form'	=> 'epicoftimewasted_user.resetting.form.%s',
 			));
 		}
 
-		if( $config['use_listener'] ) {
-			switch($config['db_driver']) {
-				case 'orm':
-					$container->getDefinition('fos_user.user_listener')->addTag('doctrine.event_subscriber');
-					break;
-				case 'mongodb':
-					$container->getDefinition('fos_user.user_listener')->addTag('doctrine.common.event_subscriber');
-					break;
-			}
+		if( !empty($config['captcha']) ) {
+			if( $config['captcha']['public_key'] === null || $config['captcha']['private_key'] === null )
+				throw new \InvalidArgumentException('Captcha requires a valid public_key and private_key.');
+
+			$loader->load('captcha.xml');
+
+			$this->remapParametersNamespaces($config['captcha'], $container, array(
+				'' => array(
+					'enabled'		=> 'epicoftimewasted_user.captcha.enabled',
+					'public_key'	=> 'epicoftimewasted_user.captcha.public_key',
+					'private_key'	=> 'epicoftimewasted_user.captcha.private_key',
+				),
+			));
 		}
-
-		$this->remapParametersNamespaces($config, $container, array(
-			'' => array(
-				'firewall_name' => 'fos_user.firewall_name',
-			),
-			'encoder'					=> 'fos_user.encoder.%s',
-			'template'					=> 'fos_user.template.%s',
-			'form_name'					=> 'fos_user.form.%s.name',
-			'form_validation_groups'	=> 'fos_user.form.%s.validation.groups',
-		));
-
-		$this->remapParametersNamespaces($config['class'], $container, array(
-			'model'			=> 'fos_user.model.%s.class',
-			'form'			=> 'fos_user.form.type.%s.class',
-			'form_handler'	=> 'fos_user.form.handler.%s.class',
-			'controller'	=> 'fos_user.controller.%s.class',
-		));
-
-		$this->remapParametersNamespaces($config['email'], $container, array(
-			''						=> array('from_email' => 'fos_user.email.from_email'),
-			'confirmation'			=> 'fos_user.email.confirmation.%s',
-			'resetting_password'	=> 'fos_user.email.resetting_password.%s',
-		));
-*/
 	}
 
 	protected function remapParameters(array $config, ContainerBuilder $container, array $map)
 	{
 		foreach( $map as $name => $paramName ) {
-			if( isset($config[$name]) )
+			if( array_key_exists($name, $config) )
 				$container->setParameter($paramName, $config[$name]);
 		}
 	}
@@ -150,7 +144,7 @@ class EpicoftimewastedUserExtension extends Extension
 	{
 		foreach( $namespaces as $ns => $map ) {
 			if( $ns ) {
-				if( !isset($config[$ns]) )
+				if( !array_key_exists($ns, $config) )
 					continue;
 				$namespaceConfig = $config[$ns];
 			} else {
@@ -159,10 +153,8 @@ class EpicoftimewastedUserExtension extends Extension
 			if( is_array($map) ) {
 				$this->remapParameters($namespaceConfig, $container, $map);
 			} else {
-				foreach( $namespaceConfig as $name => $value ) {
-					if( $value !== null )
-						$container->setParameter(sprintf($map, $name), $value);
-				}
+				foreach( $namespaceConfig as $name => $value )
+					$container->setParameter(sprintf($map, $name), $value);
 			}
 		}
 	}

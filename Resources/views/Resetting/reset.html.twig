@@ -1,0 +1,14 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% form_theme form 'EpicoftimewastedUserBundle::form.html.twig' %}
+
+{% block content %}
+{% spaceless %}
+<form action="{{ path('epicoftimewasted_user_resetting_reset', {'token': token}) }}" method="post">
+	<div id="userForm" class="twoColumn">
+		{{ form_widget(form) }}
+		<button type="submit">{{ 'resetting.reset.submit'|trans([], 'EpicoftimewastedUserBundle') }}</button>
+	</div>
+</form>
+{% endspaceless %}
+{% endblock %}

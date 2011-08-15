@@ -1,0 +1,19 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% form_theme form 'EpicoftimewastedUserBundle::form.html.twig' %}
+
+{% block content %}
+{% spaceless %}
+<form action="{{ path('epicoftimewasted_user_registration_register') }}" method="post">
+	<div id="userForm" class="twoColumn">
+		{{ form_widget(form) }}
+{% if captcha is not null %}
+		<div id="captcha">
+			{{ captcha|raw }}
+		</div>
+{% endif %}
+		<button type="submit">{{ 'registration.register.submit'|trans({}, 'EpicoftimewastedUserBundle') }}</button>
+	</div>
+</form>
+{% endspaceless %}
+{% endblock %}

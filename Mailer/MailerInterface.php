@@ -2,21 +2,21 @@
 
 namespace Epicoftimewasted\UserBundle\Mailer;
 
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 
 interface MailerInterface
 {
 	/**
 	 * Send an e-mail to a user to confirm the account creation.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 */
-	public function sendConfirmationEmail(EpicoftimewastedUserInterface $user);
+	public function sendConfirmationEmail(UserInterface $user);
 
 	/**
 	 * Send an e-mail to a user to confirm the password reset request.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 */
-	public function sendResettingPasswordEmail(EpicoftimewastedUserInterface $user);
+	public function sendResettingPasswordEmail(UserInterface $user);
 }

@@ -1,41 +1,49 @@
-# Login form
-login_username:              "Username:"
-login_password:              "Password:"
-login_password_notice:       "Note: Password is case sensitive"
-login_forgot_password:       "Help!  I forgot my password!"
-login_login:                 "Login"
-login_authentication_failed: "Authentication failed"
+# Global
+layout.login:             "Login"
+layout.logout:            "Logout"
+layout.password_mismatch: "The password fields must match"
 
-# User form
-userform_username:             "Username:"
-userform_email:                "E-mail:"
-userform_plainPassword_first:  "Password:"
-userform_plainPassword_second: "Repeat:"
-userform_password_mismatch:    "The password fields must match"
-userform_submit:               "Create user"
-
-# Password reset request form
-user_reset_password_request_username: "Username:"
-user_reset_password_request_submit:   "Reset password"
-
-# Password reset form
-resetpassword_newPassword_first:  "Password:"
-resetpassword_newPassword_second: "Repeat:"
-resetpassword_newPassword_submit: "Reset password"
-
-# Email notifications
-user_email_confirmation: |
+# Registration
+registration.confirm.already_logged_in:  "You can not confirm a new account, because you already have a valid, active account."
+registration.confirm.can_not_confirm:    "Unable to confirm your account."
+registration.confirmed:                  "Congratulations %username%, your account is now active!"
+registration.confirmed.go_back:          "Go back to the originating page."
+registration.check_email:                "An e-mail has been sent to %email% with instructions on how to proceed.  Please check your e-mail and follow the instructions provided."
+registration.register.already_logged_in: "You can not register a new account, because you already have a valid, active account."
+registration.register.can_not_register:  "Unable to register a new account."
+registration.register.submit:            "Register account"
+registration.email: |
     Welcome %username%!
-    Hello %username%, thank you for taking the time to create a new account!
+    Hello %username%, thank you for taking the time to register a new account!
 
     In order to use your account, you must first verify that you received this e-mail.  To do that, simply visit %confirmationUrl%
 
     Thanks,
     <your site name here>
 
-user_email_resetting_password: |
+# Form fields
+epicoftimewasted_user_registration_form_username:             "Username:"
+epicoftimewasted_user_registration_form_email:                "E-mail:"
+epicoftimewasted_user_registration_form_plainPassword_first:  "Password:"
+epicoftimewasted_user_registration_form_plainPassword_second: "Repeat:"
+
+# Login
+security.login.authentication_failed:   "Authentication failed"
+security.login.password:                "Password:"
+security.login.password.case_sensitive: "Note: Password is case sensitive"
+security.login.password.recover:        "Help!  I forgot my password!"
+security.login.username:                "Username:"
+
+# Resetting
+resetting.check_email:             "An e-mail has been sent to the address on record for this account with instructions on how to reset the password.  Please check your e-mail and follow the instructions provided."
+resetting.reset.submit:            "Reset password"
+resetting.reset_success:           "You have successfully reset your password."
+resetting.request.invalid_captcha: "Captcha input was incorrect."
+resetting.request.username:        "Username:"
+resetting.request.submit:          "Reset password"
+resetting.email: |
     Password reset request for %username%
-    Someone claiming to be %username% has requested a password reset for the account.  If you did not make this request, it could be that someone is trying to access your account.
+    Someone claiming to be %username% has requested a password reset for this account.  If you did not make this request, it could be that someone is trying to access your account.
     However, if you did make this request, you can proceed with resetting your password by visiting %confirmationUrl%
 
     Please note that the above link is only valid for 24 hours from the time that it was sent.
@@ -43,5 +51,57 @@ user_email_resetting_password: |
     Thanks,
     <your site name here>
 
+# Form fields
+epicoftimewasted_user_resetting_form_newPassword_first:  "Password:"
+epicoftimewasted_user_resetting_form_newPassword_second: "Repeat:"
+
+
+
+
+# Login form
+#login_username:              "Username:"
+#login_password:              "Password:"
+#login_password_notice:       "Note: Password is case sensitive"
+#login_forgot_password:       "Help!  I forgot my password!"
+#login_login:                 "Login"
+#login_authentication_failed: "Authentication failed"
+
+# User form
+#userform_username:             "Username:"
+#userform_email:                "E-mail:"
+#userform_plainPassword_first:  "Password:"
+#userform_plainPassword_second: "Repeat:"
+#userform_password_mismatch:    "The password fields must match"
+#userform_submit:               "Create user"
+
+# Password reset request form
+#user_reset_password_request_username: "Username:"
+#user_reset_password_request_submit:   "Reset password"
+
+# Password reset form
+#resetpassword_newPassword_first:  "Password:"
+#resetpassword_newPassword_second: "Repeat:"
+#resetpassword_newPassword_submit: "Reset password"
+
+# Email notifications
+#user_email_confirmation: |
+#    Welcome %username%!
+#    Hello %username%, thank you for taking the time to create a new account!
+
+#    In order to use your account, you must first verify that you received this e-mail.  To do that, simply visit %confirmationUrl%
+
+#    Thanks,
+#    <your site name here>
+
+#user_email_resetting_password: |
+#    Password reset request for %username%
+#    Someone claiming to be %username% has requested a password reset for the account.  If you did not make this request, it could be that someone is trying to access your account.
+#    However, if you did make this request, you can proceed with resetting your password by visiting %confirmationUrl%
+
+#    Please note that the above link is only valid for 24 hours from the time that it was sent.
+
+#    Thanks,
+#    <your site name here>
+
 # Account confirmed
-user_account_active: Congratulations %username%, your account is now active!
+#user_account_active: Congratulations %username%, your account is now active!

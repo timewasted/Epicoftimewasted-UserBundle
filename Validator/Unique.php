@@ -9,7 +9,7 @@ class Unique extends Constraint
 	/**
 	 * @var string $message
 	 */
-	public $message = 'One of more of the properties is not unique.';
+	public $message = 'One or more of the properties is not unique.';
 
 	/**
 	 * @var array $properties
@@ -19,7 +19,7 @@ class Unique extends Constraint
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getDefaultOption()
+	public function defaultOption()
 	{
 		return 'properties';
 	}
@@ -27,7 +27,7 @@ class Unique extends Constraint
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getRequiredOptions()
+	public function requiredOptions()
 	{
 		return array('properties');
 	}

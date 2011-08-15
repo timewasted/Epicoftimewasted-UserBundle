@@ -2,15 +2,15 @@
 
 namespace Epicoftimewasted\UserBundle\Mailer;
 
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 
 class NoopMailer implements MailerInterface
 {
-	public function sendConfirmationEmail(EpicoftimewastedUserInterface $user)
+	public function sendConfirmationEmail(UserInterface $user)
 	{
 	}
 
-	public function sendResettingPasswordEmail(EpicoftimewastedUserInterface $user)
+	public function sendResettingPasswordEmail(UserInterface $user)
 	{
 	}
 }

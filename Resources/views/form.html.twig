@@ -20,8 +20,8 @@
 {% block field_errors %}
 {% spaceless %}
 	{% for error in errors %}
-	{% if error.messageTemplate == 'The value is invalid' %}
-	<div class="note">{{ 'user_password_mismatch'|trans([], 'EpicoftimewastedUserBundle') }}</div>
+	{% if error.messageTemplate == 'This value is not valid' %}
+	<div class="note">{{ 'layout.password_mismatch'|trans({}, 'EpicoftimewastedUserBundle') }}</div>
 	{% else %}
 	<div class="note">{{ error.messageTemplate|trans(error.messageParameters, 'validators') }}</div>
 	{% endif %}
@@ -31,7 +31,7 @@
 
 {% block field_label %}
 {% spaceless %}
-	<div class="label"><label for="{{ id }}">{{ id|trans([], 'EpicoftimewastedUserBundle') }}</label></div>
+	<div class="label"><label for="{{ id }}">{{ id|trans({}, 'EpicoftimewastedUserBundle') }}</label></div>
 {% endspaceless %}
 {% endblock field_label %}
 

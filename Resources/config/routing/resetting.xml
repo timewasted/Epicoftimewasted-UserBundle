@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <route id="epicoftimewasted_user_resetting_request" pattern="/reset-password-request/">
+        <default key="_controller">EpicoftimewastedUserBundle:Resetting:request</default>
+        <requirement key="_method">GET</requirement>
+        <requirement key="_scheme">https</requirement>
+    </route>
+
+    <route id="epicoftimewasted_user_resetting_send_email" pattern="/reset-password-send-email/">
+        <default key="_controller">EpicoftimewastedUserBundle:Resetting:sendEmail</default>
+        <requirement key="_method">POST</requirement>
+        <requirement key="_scheme">https</requirement>
+    </route>
+
+    <route id="epicoftimewasted_user_resetting_check_email" pattern="/reset-password-check-email/">
+        <default key="_controller">EpicoftimewastedUserBundle:Resetting:checkEmail</default>
+        <requirement key="_method">GET</requirement>
+        <requirement key="_scheme">https</requirement>
+    </route>
+
+    <route id="epicoftimewasted_user_resetting_reset" pattern="/reset-password/{token}/">
+        <default key="_controller">EpicoftimewastedUserBundle:Resetting:reset</default>
+        <requirement key="_method">GET|POST</requirement>
+        <requirement key="_scheme">https</requirement>
+        <requirement key="token">[A-Za-z0-9]+</requirement>
+    </route>
+
+    <route id="epicoftimewasted_user_resetting_reset_success" pattern="/reset-password-success/">
+        <default key="_controller">EpicoftimewastedUserBundle:Resetting:resetSuccess</default>
+        <requirement key="_method">GET</requirement>
+        <requirement key="_scheme">https</requirement>
+    </route>
+
+</routes>

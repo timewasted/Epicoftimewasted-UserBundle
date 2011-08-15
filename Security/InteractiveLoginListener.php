@@ -2,7 +2,7 @@
 
 namespace Epicoftimewasted\UserBundle\Security;
 
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Epicoftimewasted\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
@@ -18,7 +18,7 @@ class InteractiveLoginListener
 	public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
 	{
 		$user = $event->getAuthenticationToken()->getUser();
-		if( $user instanceof EpicoftimewastedUserInterface ) {
+		if( $user instanceof UserInterface ) {
 			$user->setLastLogin(new \DateTime());
 			$user->resetFailedLoginAttempts();
 			$this->userManager->updateUser($user);

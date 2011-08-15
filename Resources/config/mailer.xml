@@ -1,8 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="epicoftimewasted_user.resetting.email.template">EpicoftimewastedUserBundle:Resetting:email.txt.twig</parameter>
+        <parameter key="epicoftimewasted_user.registration.confirmation.template">EpicoftimewastedUserBundle:Registration:email.txt.twig</parameter>
+    </parameters>
 
     <services>
         <service id="epicoftimewasted_user.mailer.default" class="Epicoftimewasted\UserBundle\Mailer\SwiftMailer" public="false">
@@ -10,9 +15,12 @@
             <argument type="service" id="router" />
             <argument type="service" id="templating" />
             <argument type="collection">
-                <argument key="confirmation.template">%epicoftimewasted_user.email.confirmation.template%</argument>
-                <argument key="resetting_password.template">%epicoftimewasted_user.email.resetting_password.template%</argument>
-                <argument key="from_email">%epicoftimewasted_user.email.from_email%</argument>
+                <argument key="confirmation.template">%epicoftimewasted_user.registration.confirmation.template%</argument>
+                <argument key="resetting.template">%epicoftimewasted_user.resetting.email.template%</argument>
+                <argument key="from_email" type="collection">
+                    <argument key="confirmation">%epicoftimewasted_user.registration.confirmation.from_email%</argument>
+                    <argument key="resetting">%epicoftimewasted_user.resetting.email.from_email%</argument>
+                </argument>
             </argument>
         </service>
 

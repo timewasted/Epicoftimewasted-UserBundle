@@ -1,0 +1,7 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% block content %}
+{% spaceless %}
+	<p>{{ 'registration.check_email'|trans({'%email%': user.getEmail()}, 'EpicoftimewastedUserBundle') }}</p>
+{% endspaceless %}
+{% endblock %}

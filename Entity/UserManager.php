@@ -5,7 +5,7 @@ namespace Epicoftimewasted\UserBundle\Entity;
 //use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
 use Doctrine\ORM\EntityManager;
 use Epicoftimewasted\UserBundle\Model\AbstractUserManager;
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Epicoftimewasted\UserBundle\Util\CanonicalizerInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Validator\Constraint;
@@ -58,7 +58,7 @@ class UserManager extends AbstractUserManager
 	/**
 	 * {@inheritDoc}
 	 */
-	public function updateUser(EpicoftimewastedUserInterface $user, $shouldFlush = true)
+	public function updateUser(UserInterface $user, $shouldFlush = true)
 	{
 		$this->updateCanonicalFields($user);
 		$this->updatePassword($user);
@@ -71,7 +71,7 @@ class UserManager extends AbstractUserManager
 	/**
 	 * {@inheritDoc}
 	 */
-	public function deleteUser(EpicoftimewastedUserInterface $user)
+	public function deleteUser(UserInterface $user)
 	{
 		$this->em->remove($user);
 		$this->em->flush();
@@ -88,13 +88,20 @@ class UserManager extends AbstractUserManager
 	/**
 	 * {@inheritDoc}
 	 */
-	public function validateUnique(EpicoftimewastedUserInterface $user, Constraint $constraint)
+	public function validateUnique(UserInterface $user, Constraint $constraint)
 	{
-		$classMetadata = $this->em->getClassMetadata($this->class);
+		/**
+		 * Since we're searching canonical fields, lets make sure they're current.
+		 */
+		$this->updateCanonicalFields($user);
 
-		foreach( $constraint->properties as $property ) {
+		/**
+		 * Search for conflicting users.
+		 */
+		$classMetadata = $this->em->getClassMetadata($this->class);
+		foreach( $constraint->properties as &$property ) {
 			if( !$classMetadata->hasField($property) )
-				throw new \InvalidArgumentException(sprintf('The "%s" class metadata does not have any "%s" field or association mapping.', $this->class, $field));
+				throw new \InvalidArgumentException(sprintf('The "%s" class metadata does not have any "%s" field or association mapping.', $this->class, $property));
 
 			$criteria = array($property => $classMetadata->getFieldValue($user, $property));
 			if( $this->findUserBy($criteria) !== null )

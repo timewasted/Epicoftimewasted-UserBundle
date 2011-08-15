@@ -16,63 +16,63 @@ interface UserManagerInterface
 	/**
 	 * Creates a new skeleton user.
 	 *
-	 * @return EpicoftimewastedUserInterface
+	 * @return UserInterface
 	 */
 	public function createUser();
 
 	/**
 	 * Creates a temporary user skeleton account.
 	 *
-	 * @return EpicoftimewastedUserInterface
+	 * @return UserInterface
 	 */
 	public function createTemporaryUser();
 
 	/**
 	 * Creates a secure confirmation token for the account.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 * @return void
 	 */
-	public function createConfirmationToken(EpicoftimewastedUserInterface $user);
+	public function createConfirmationToken(UserInterface $user);
 
 	/**
 	 * Updates a user's canonical information.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 * @return void
 	 */
-	public function updateCanonicalFields(EpicoftimewastedUserInterface $user);
+	public function updateCanonicalFields(UserInterface $user);
 
 	/**
 	 * Encodes a user's plain text password, then removes the plain text password.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 * @return void
 	 */
-	public function updatePassword(EpicoftimewastedUserInterface $user);
+	public function updatePassword(UserInterface $user);
 
 	/**
 	 * Updates a user's information.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 * @param boolean $shouldFlush
 	 * @return void
 	 */
-	public function updateUser(EpicoftimewastedUserInterface $user, $shouldFlush);
+	public function updateUser(UserInterface $user, $shouldFlush);
 
 	/**
 	 * Deletes a user.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 * @return void
 	 */
-	public function deleteUser(EpicoftimewastedUserInterface $user);
+	public function deleteUser(UserInterface $user);
 
 	/**
 	 * Finds a user by the specified criteria.
 	 *
 	 * @param array $criteria
-	 * @return EpicoftimewastedUserInterface or null
+	 * @return UserInterface or null
 	 */
 	public function findUserBy(array $criteria);
 
@@ -80,7 +80,7 @@ interface UserManagerInterface
 	 * Wrapper for findUserBy to find a user by their username.
 	 *
 	 * @param string $username
-	 * @return EpicoftimewastedUserInterface or null
+	 * @return UserInterface or null
 	 */
 	public function findUserByUsername($username);
 
@@ -88,7 +88,7 @@ interface UserManagerInterface
 	 * Wrapper for findUserBy to find a user by their e-mail addres.
 	 *
 	 * @param string $email
-	 * @return EpicoftimewastedUserInterface or null
+	 * @return UserInterface or null
 	 */
 	public function findUserByEmail($email);
 
@@ -96,16 +96,16 @@ interface UserManagerInterface
 	 * Wrapper for findUserBy to find a user by their confirmation token.
 	 *
 	 * @param string $token
-	 * @return EpicoftimewastedUserInterface or null
+	 * @return UserInterface or null
 	 */
 	public function findUserByConfirmationToken($token);
 
 	/**
 	 * Verifies that the fields provided are unique.
 	 *
-	 * @param EpicoftimewastedUserInterface $user
+	 * @param UserInterface $user
 	 * @param Constraint $constraint
 	 * @return boolean
 	 */
-	public function validateUnique(EpicoftimewastedUserInterface $user, Constraint $constraint);
+	public function validateUnique(UserInterface $user, Constraint $constraint);
 }

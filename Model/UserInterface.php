@@ -4,7 +4,7 @@ namespace Epicoftimewasted\UserBundle\Model;
 
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
-interface EpicoftimewastedUserInterface extends AdvancedUserInterface
+interface UserInterface extends AdvancedUserInterface, \Serializable
 {
 	/**
 	 * Sets the username of the account.

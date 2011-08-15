@@ -1,22 +1,30 @@
 {% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
 
 {% block content %}
-<form action="{{ path("_security_check") }}" method="post">
+{% spaceless %}
+<form action="{{ path("_security_login_check") }}" method="post">
 	<div id="userForm" class="twoColumn">
 {% if error %}
-		<div class="note"><h1>{{ error|trans([], 'EpicoftimewastedUserBundle') }}</h1></div>
+		<div class="note"><h1>{{ error|trans({}, 'EpicoftimewastedUserBundle') }}</h1></div>
 {% endif %}
-		<div class="label"><label for="username">{{ 'login_username'|trans([], 'EpicoftimewastedUserBundle') }}</label></div>
+
+		<div class="label"><label for="username">{{ 'security.login.username'|trans({}, 'EpicoftimewastedUserBundle') }}</label></div>
 		<div class="content"><input type="text" id="username" name="_username" value="{{ last_username }}" autofocus="autofocus" /></div>
-		<div class="label"><label for="password">{{ 'login_password'|trans([], 'EpicoftimewastedUserBundle') }}</label></div>
+
+		<div class="label"><label for="password">{{ 'security.login.password'|trans({}, 'EpicoftimewastedUserBundle') }}</label></div>
 		<div class="content"><input type="password" id="password" name="_password" /></div>
-		<div class="note">{{ 'login_password_notice'|trans([], 'EpicoftimewastedUserBundle') }}</div>
-		<div class="note"><a href="{{ path('epicoftimewasted_user_user_reset_password_request') }}">{{ 'login_forgot_password'|trans([], 'EpicoftimewastedUserBundle') }}</a></div>
+
+		<div class="note">{{ 'security.login.password.case_sensitive'|trans({}, 'EpicoftimewastedUserBundle') }}</div>
+
+		<div class="note"><a href="{{ path('epicoftimewasted_user_resetting_request') }}">{{ 'security.login.password.recover'|trans({}, 'EpicoftimewastedUserBundle') }}</a></div>
+
 {% if referer is not null %}
 		<input type="hidden" id="target_path" name="_target_path" value="{{ referer }}" />
 {% endif %}
 		<input type="hidden" id="remember_me" name="_remember_me" value="on" />
-		<button type="submit">{{ 'login_login'|trans([], 'EpicoftimewastedUserBundle') }}</button>
+
+		<button type="submit">{{ 'layout.login'|trans({}, 'EpicoftimewastedUserBundle') }}</button>
 	</div>
 </form>
+{% endspaceless %}
 {% endblock %}

@@ -3,9 +3,9 @@
 namespace Epicoftimewasted\UserBundle\Security\Encoder;
 
 //use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 
 class EncoderFactory implements EncoderFactoryInterface
 {
@@ -47,9 +47,9 @@ class EncoderFactory implements EncoderFactoryInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getEncoder(UserInterface $user)
+	public function getEncoder(SecurityUserInterface $user)
 	{
-		if( !$user instanceof EpicoftimewastedUserInterface )
+		if( !$user instanceof UserInterface )
 			return $this->genericFactory->getEncoder($user);
 
 		return $this->createEncoder($user->getAlgorithm(), $user->getWorkFactor());

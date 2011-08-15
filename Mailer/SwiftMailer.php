@@ -3,7 +3,7 @@
 namespace Epicoftimewasted\UserBundle\Mailer;
 
 use Epicoftimewasted\UserBundle\Mailer\MailerInterface;
-use Epicoftimewasted\UserBundle\Model\EpicoftimewastedUserInterface;
+use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -45,29 +45,29 @@ class SwiftMailer implements MailerInterface
 	/**
 	 * {@inheritDoc}
 	 */
-	public function sendConfirmationEmail(EpicoftimewastedUserInterface $user)
+	public function sendConfirmationEmail(UserInterface $user)
 	{
 		$template = $this->parameters['confirmation.template'];
-		$url = $this->router->generate('epicoftimewasted_user_user_confirm_account', array('token' => $user->getConfirmationToken()), true);
-		$message = $this->templating->render($template . '.txt.twig', array(
+		$url = $this->router->generate('epicoftimewasted_user_registration_confirm_account', array('token' => $user->getConfirmationToken()), true);
+		$message = $this->templating->render($template, array(
 			'user' => $user,
 			'url' => $url,
 		));
-		$this->sendEmail($message, $this->parameters['from_email'], $user->getEmail());
+		$this->sendEmail($message, $this->parameters['from_email']['confirmation'], $user->getEmail());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function sendResettingPasswordEmail(EpicoftimewastedUserInterface $user)
+	public function sendResettingPasswordEmail(UserInterface $user)
 	{
-		$template = $this->parameters['resetting_password.template'];
-		$url = $this->router->generate('epicoftimewasted_user_user_confirm_reset_password', array('token' => $user->getConfirmationToken()), true);
-		$message = $this->templating->render($template . '.txt.twig', array(
+		$template = $this->parameters['resetting.template'];
+		$url = $this->router->generate('epicoftimewasted_user_resetting_confirm_reset', array('token' => $user->getConfirmationToken()), true);
+		$message = $this->templating->render($template, array(
 			'user' => $user,
 			'url' => $url,
 		));
-		$this->sendEmail($message, $this->parameters['from_email'], $user->getEmail());
+		$this->sendEmail($message, $this->parameters['from_email']['resetting'], $user->getEmail());
 	}
 
 	/**

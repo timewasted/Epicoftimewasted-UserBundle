@@ -7,7 +7,7 @@ use Epicoftimewasted\UserBundle\Util\CanonicalizerInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 abstract class AbstractUserManager implements UserManagerInterface, UserProviderInterface
@@ -65,10 +65,10 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	/**
 	 * Implements UserProviderInterface
 	 *
-	 * @param UserInterface $user
+	 * @param SecurityUserInterface $user
 	 * @return UserInterface
 	 */
-	public function refreshUser(UserInterface $user)
+	public function refreshUser(SecurityUserInterface $user)
 	{
 		if( !$user instanceof AbstractUser )
 			throw new UnsupportedUserException(sprintf('Users of instance "%s" are not supported.', get_class($user)));
@@ -140,7 +140,7 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	/**
 	 * {@inheritDoc}
 	 */
-	public function createConfirmationToken(EpicoftimewastedUserInterface $user)
+	public function createConfirmationToken(UserInterface $user)
 	{
 		$user->setConfirmationToken(bin2hex($this->cryptoManager->getEntropy(20)));
 	}
@@ -148,7 +148,7 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	/**
 	 * {@inheritDoc}
 	 */
-	public function updateCanonicalFields(EpicoftimewastedUserInterface $user)
+	public function updateCanonicalFields(UserInterface $user)
 	{
 		$user->setUsernameCanonical($this->usernameCanonicalizer->canonicalize($user->getUsername()));
 		$user->setEmailCanonical($this->emailCanonicalizer->canonicalize($user->getEmail()));
@@ -157,7 +157,7 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	/**
 	 * {@inheritDoc}
 	 */
-	public function updatePassword(EpicoftimewastedUserInterface $user)
+	public function updatePassword(UserInterface $user)
 	{
 		$password = $user->getPlainPassword();
 		if( is_string($password) && !empty($password) ) {

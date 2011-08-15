@@ -1,0 +1,8 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% block content %}
+{% spaceless %}
+	<h2>{{ 'registration.register.can_not_register'|trans({}, 'EpicoftimewastedUserBundle') }}</h2>
+	<p>{{ 'registration.register.already_logged_in'|trans({}, 'EpicoftimewastedUserBundle') }}</p>
+{% endspaceless %}
+{% endblock %}

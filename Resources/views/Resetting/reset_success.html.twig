@@ -1,0 +1,7 @@
+{% extends 'EpicoftimewastedUserBundle::layout.html.twig' %}
+
+{% block content %}
+{% spaceless %}
+	<p>{{ 'resetting.reset_success'|trans({'%username%': user.getUsername()}, 'EpicoftimewastedUserBundle') }}</p>
+{% endspaceless %}
+{% endblock %}

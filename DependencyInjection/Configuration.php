@@ -21,100 +21,67 @@ class Configuration implements ConfigurationInterface
 		$rootNode
 			->children()
 				->scalarNode('db_driver')->cannotBeOverwritten()->isRequired()->cannotBeEmpty()->end()
+				->scalarNode('user_class')->isRequired()->cannotBeEmpty()->end()
 				->scalarNode('firewall_name')->isRequired()->cannotBeEmpty()->end()
+				->scalarNode('model_manager_name')->defaultNull()->end()
 				->booleanNode('use_listener')->defaultTrue()->end()
+				->booleanNode('use_username_form_type')->defaultTrue()->end()
+				->arrayNode('from_email')
+					->addDefaultsIfNotSet()
+					->children()
+						->scalarNode('address')->defaultValue('webmaster@example.com')->cannotBeEmpty()->end()
+						->scalarNode('sender_name')->defaultValue('webmaster')->cannotBeEmpty()->end()
+					->end()
+				->end()
 			->end();
 
-		$this->addClassSection($rootNode);
-		$this->addEmailSection($rootNode);
-		$this->addEncoderSection($rootNode);
-		$this->addFormNameSection($rootNode);
-		$this->addRoutesSection($rootNode);
-		$this->addServiceSection($rootNode);
 		$this->addCaptchaSection($rootNode);
+//		$this->addChangePasswordSection($rootNode);
+		$this->addEncoderSection($rootNode);
+		$this->addRegistrationSection($rootNode);
+		$this->addResettingSection($rootNode);
+		$this->addServiceSection($rootNode);
 
 		return $treeBuilder;
 	}
 
-	private function addClassSection(ArrayNodeDefinition $node)
+	private function addCaptchaSection(ArrayNodeDefinition $node)
 	{
 		$node
 			->children()
-				->arrayNode('class')
-					->isRequired()
+				->arrayNode('captcha')
 					->addDefaultsIfNotSet()
+					->canBeUnset()
 					->children()
-						->arrayNode('model')
-							->isRequired()
-							->children()
-								->scalarNode('user')->isRequired()->cannotBeEmpty()->end()
-							->end()
-						->end()
+						->booleanNode('enabled')->defaultFalse()->end()
+						->scalarNode('public_key')->defaultNull()->cannotBeEmpty()->end()
+						->scalarNode('private_key')->defaultNull()->cannotBeEmpty()->end()
+					->end()
+				->end()
+			->end();
+	}
+/*
+    private function addChangePasswordSection(ArrayNodeDefinition $node)
+    {
+		$node
+			->children()
+				->arrayNode('change_password')
+					->addDefaultsIfNotSet()
+					->canBeUnset()
+					->children()
 						->arrayNode('form')
-							->addDefaultsIfNotSet()
+						->addDefaultsIfNotSet()
 							->children()
-								->scalarNode('user')->defaultValue('Epicoftimewasted\\UserBundle\\Form\\UserFormType')->end()
-								->scalarNode('reset_password')->defaultValue('Epicoftimewasted\\UserBundle\\Form\\ResetPasswordFormType')->end()
-//								->scalarNode('change_password')->defaultValue('Epicoftimewasted\\UserBundle\\Form\\ChangePasswordFormType')->end()
-							->end()
-						->end()
-						->arrayNode('form_handler')
-							->addDefaultsIfNotSet()
-							->children()
-								->scalarNode('user')->defaultValue('Epicoftimewasted\\UserBundle\\Form\\UserFormHandler')->end()
-								->scalarNode('reset_password')->defaultValue('Epicoftimewasted\\UserBundle\\Form\\ResetPasswordFormHandler')->end()
-//								->scalarNode('change_password')->defaultValue('Epicoftimewasted\\UserBundle\\Form\\ChangePasswordFormHandler')->end()
-							->end()
-						->end()
-						->arrayNode('controller')
-							->addDefaultsIfNotSet()
-							->children()
-								->scalarNode('user')->defaultValue('Epicoftimewasted\\UserBundle\\Controller\\UserController')->end()
-								->scalarNode('security')->defaultValue('Epicoftimewasted\\UserBundle\\Controller\\SecurityController')->end()
+								->scalarNode('type')->defaultValue('epicoftimewasted_user_change_password')->end()
+								->scalarNode('handler')->defaultValue('epicoftimewasted_user.change_password.form.handler.default')->end()
+								->scalarNode('name')->defaultValue('epicoftimewasted_user_change_password_form')->cannotBeEmpty()->end()
 							->end()
 						->end()
 					->end()
 				->end()
 			->end();
 	}
-
-	private function addEmailSection(ArrayNodeDefinition $node)
-	{
-		$node
-			->children()
-				->arrayNode('email')
-					->addDefaultsIfNotSet()
-					->children()
-						->arrayNode('from_email')
-							->addDefaultsIfNotSet()
-							->useAttributeAsKey('address')
-							->prototype('scalar')
-								->beforeNormalization()
-									->ifTrue(function($v) { return is_array($v) && isset($v['name']); })
-									->then(function($v) { return $v['name']; })
-								->end()
-							->end()
-							->defaultValue(array('webmaster@example.com' => 'webmaster'))
-						->end()
-						->arrayNode('confirmation')
-							->addDefaultsIfNotSet()
-							->children()
-								->booleanNode('enabled')->defaultFalse()->end()
-								->scalarNode('template')->defaultValue('EpicoftimewastedUserBundle:User:confirmation_email')->end()
-							->end()
-						->end()
-						->arrayNode('resetting_password')
-							->addDefaultsIfNotSet()
-							->children()
-								->scalarNode('template')->defaultValue('EpicoftimewastedUserBundle:User:resetting_password_email')->end()
-								->scalarNode('token_ttl')->defaultValue(86400)->end()
-							->end()
-						->end()
-					->end()
-				->end()
-			->end();
-	}
-
+*/
 	private function addEncoderSection(ArrayNodeDefinition $node)
 	{
 		$node
@@ -129,28 +96,84 @@ class Configuration implements ConfigurationInterface
 			->end();
 	}
 
-	private function addFormNameSection(ArrayNodeDefinition $node)
+	private function addRegistrationSection(ArrayNodeDefinition $node)
 	{
 		$node
 			->children()
-				->arrayNode('form_name')
-				->addDefaultsIfNotSet()
-				->children()
-					->scalarNode('user')->defaultValue('epicoftimewasted_user_user_form')->cannotBeEmpty()->end()
-					->scalarNode('reset_password')->defaultValue('epicoftimewasted_user_reset_password_form')->cannotBeEmpty()->end()
-					->scalarNode('change_password')->defaultValue('epicoftimewasted_user_change_password_form')->cannotBeEmpty()->end()
+				->arrayNode('registration')
+					->addDefaultsIfNotSet()
+					->canBeUnset()
+					->children()
+						->arrayNode('confirmation')
+							->addDefaultsIfNotSet()
+							->children()
+								->booleanNode('enabled')->defaultFalse()->end()
+								->scalarNode('template')->defaultValue('EpicoftimewastedUserBundle:Registration:email.txt.twig')->end()
+								->arrayNode('from_email')
+									->canBeUnset()
+									->children()
+										->scalarNode('address')->isRequired()->cannotBeEmpty()->end()
+										->scalarNode('sender_name')->isRequired()->cannotBeEmpty()->end()
+									->end()
+								->end()
+							->end()
+						->end()
+						->arrayNode('form')
+							->addDefaultsIfNotSet()
+							->children()
+								->scalarNode('type')->defaultValue('epicoftimewasted_user_registration')->end()
+								->scalarNode('handler')->defaultValue('epicoftimewasted_user.registration.form.handler.default')->end()
+								->scalarNode('name')->defaultValue('epicoftimewasted_user_registration_form')->cannotBeEmpty()->end()
+							->end()
+						->end()
+						->arrayNode('routes')
+							->addDefaultsIfNotSet()
+							->children()
+								->scalarNode('confirmed')->defaultValue('epicoftimewasted_user_registration_account_confirmed')->cannotBeEmpty()->end()
+							->end()
+						->end()
+					->end()
 				->end()
 			->end();
 	}
 
-	private function addRoutesSection(ArrayNodeDefinition $node)
+	private function addResettingSection(ArrayNodeDefinition $node)
 	{
 		$node
 			->children()
-				->arrayNode('routes')
-				->addDefaultsIfNotSet()
-				->children()
-					->scalarNode('account_active')->defaultValue('epicoftimewasted_user_user_account_active')->end()
+				->arrayNode('resetting')
+					->addDefaultsIfNotSet()
+					->canBeUnset()
+					->children()
+						->scalarNode('token_ttl')->defaultValue(86400)->end()
+						->arrayNode('email')
+							->addDefaultsIfNotSet()
+							->children()
+								->scalarNode('template')->defaultValue('EpicoftimewastedUserBundle:Resetting:email.txt.twig')->end()
+								->arrayNode('from_email')
+									->canBeUnset()
+									->children()
+										->scalarNode('address')->isRequired()->cannotBeEmpty()->end()
+										->scalarNode('sender_name')->isRequired()->cannotBeEmpty()->end()
+									->end()
+								->end()
+							->end()
+						->end()
+						->arrayNode('form')
+							->addDefaultsIfNotSet()
+							->children()
+								->scalarNode('type')->defaultValue('epicoftimewasted_user_resetting')->end()
+								->scalarNode('handler')->defaultValue('epicoftimewasted_user.resetting.form.handler.default')->end()
+								->scalarNode('name')->defaultValue('epicoftimewasted_user_resetting_form')->cannotBeEmpty()->end()
+							->end()
+						->end()
+						->arrayNode('routes')
+							->addDefaultsIfNotSet()
+							->children()
+								->scalarNode('reset_success')->defaultValue('epicoftimewasted_user_resetting_reset_success')->cannotBeEmpty()->end()
+							->end()
+						->end()
+					->end()
 				->end()
 			->end();
 	}
@@ -158,7 +181,7 @@ class Configuration implements ConfigurationInterface
 	private function addServiceSection(ArrayNodeDefinition $node)
 	{
 		$node
-//			->addDefaultsIfNotSet()
+			->addDefaultsIfNotSet()
 			->children()
 				->arrayNode('service')
 					->addDefaultsIfNotSet()
@@ -166,121 +189,9 @@ class Configuration implements ConfigurationInterface
 						->scalarNode('mailer')->defaultValue('epicoftimewasted_user.mailer.default')->end()
 						->scalarNode('email_canonicalizer')->defaultValue('epicoftimewasted_user.util.email_canonicalizer.default')->end()
 						->scalarNode('username_canonicalizer')->defaultValue('epicoftimewasted_user.util.username_canonicalizer.default')->end()
+						->scalarNode('user_manager')->defaultValue('epicoftimewasted_user.user_manager.default')->end()
 					->end()
 				->end()
 			->end();
 	}
-
-	private function addCaptchaSection(ArrayNodeDefinition $node)
-	{
-		$node
-			->children()
-				->arrayNode('captcha')
-				->addDefaultsIfNotSet()
-				->children()
-					->booleanNode('enabled')->defaultFalse()->end()
-					->scalarNode('public_key')->defaultNull()->cannotBeEmpty()->end()
-					->scalarNode('private_key')->defaultNull()->cannotBeEmpty()->end()
-				->end()
-			->end();
-	}
 }
-/*
-class Configuration implements ConfigurationInterface
-{
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('fos_user');
-
-        $rootNode
-            ->children()
-                ->scalarNode('db_driver')->cannotBeOverwritten()->isRequired()->cannotBeEmpty()->end()
-                ->scalarNode('firewall_name')->isRequired()->cannotBeEmpty()->end()
-                ->booleanNode('use_listener')->defaultTrue()->end()
-            ->end();
-
-        $this->addClassSection($rootNode);
-        $this->addServiceSection($rootNode);
-        $this->addEncoderSection($rootNode);
-        $this->addFormNameSection($rootNode);
-        $this->addFormValidationGroupsSection($rootNode);
-        $this->addEmailSection($rootNode);
-        $this->addTemplateSection($rootNode);
-        $this->addGroupSection($rootNode);
-
-        return $treeBuilder;
-    }
-
-    private function addFormValidationGroupsSection(ArrayNodeDefinition $node)
-    {
-        $node
-            ->children()
-                ->arrayNode('form_validation_groups')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('user')
-                            ->addDefaultsIfNotSet()
-                            ->prototype('scalar')->end()
-                            ->defaultValue(array('Registration'))
-                        ->end()
-                        ->arrayNode('change_password')
-                            ->addDefaultsIfNotSet()
-                            ->prototype('scalar')->end()
-                            ->defaultValue(array('ChangePassword'))
-                        ->end()
-                        ->arrayNode('reset_password')
-                            ->addDefaultsIfNotSet()
-                            ->prototype('scalar')->end()
-                            ->defaultValue(array('ResetPassword'))
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addTemplateSection(ArrayNodeDefinition $node)
-    {
-        $node
-            ->children()
-                ->arrayNode('template')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('engine')->defaultValue('twig')->end()
-                        ->scalarNode('theme')->defaultValue('TwigBundle::form.html.twig')->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addGroupSection(ArrayNodeDefinition $node)
-    {
-        $node
-            ->canBeUnset()
-            ->children()
-                ->arrayNode('group')
-                    ->children()
-                        ->arrayNode('class')
-                            ->isRequired()
-                            ->children()
-                                ->scalarNode('model')->isRequired()->cannotBeEmpty()->end()
-                                ->scalarNode('controller')->defaultValue('FOS\\UserBundle\\Controller\\GroupController')->end()
-                            ->end()
-                        ->end()
-                        ->scalarNode('form')->defaultValue('FOS\\UserBundle\\Form\\GroupFormType')->end()
-                        ->scalarNode('form_handler')->defaultValue('FOS\\UserBundle\\Form\\GroupFormHandler')->end()
-                        ->scalarNode('form_name')
-                            ->defaultValue('fos_user_group_form')
-                            ->cannotBeEmpty()
-                        ->end()
-                        ->arrayNode('form_validation_groups')
-                            ->addDefaultsIfNotSet()
-                            ->prototype('scalar')->end()
-                            ->defaultValue(array('Registration'))
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-}
-*/

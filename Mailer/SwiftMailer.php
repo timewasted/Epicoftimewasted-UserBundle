@@ -62,7 +62,7 @@ class SwiftMailer implements MailerInterface
 	public function sendResettingPasswordEmail(UserInterface $user)
 	{
 		$template = $this->parameters['resetting.template'];
-		$url = $this->router->generate('epicoftimewasted_user_resetting_confirm_reset', array('token' => $user->getConfirmationToken()), true);
+		$url = $this->router->generate('epicoftimewasted_user_resetting_reset', array('token' => $user->getConfirmationToken()), true);
 		$message = $this->templating->render($template, array(
 			'user' => $user,
 			'url' => $url,

@@ -79,6 +79,7 @@ class EpicoftimewastedUserExtension extends Extension
 			$this->remapParametersNamespaces($config['registration'], $container, array(
 				'confirmation'	=> 'epicoftimewasted_user.registration.confirmation.%s',
 				'form'			=> 'epicoftimewasted_user.registration.form.%s',
+				'routes'		=> 'epicoftimewasted_user.registration.routes.%s',
 			));
 		}
 /*
@@ -113,6 +114,7 @@ class EpicoftimewastedUserExtension extends Extension
 				),
 				'email'	=> 'epicoftimewasted_user.resetting.email.%s',
 				'form'	=> 'epicoftimewasted_user.resetting.form.%s',
+				'routes' => 'epicoftimewasted_user.resetting.routes.%s',
 			));
 		}
 

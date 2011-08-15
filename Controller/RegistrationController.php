@@ -41,10 +41,10 @@ class RegistrationController extends Controller
 				$route = 'epicoftimewasted_user_registration_check_email';
 			} else {
 				$this->authenticateUser($user);
-				$route = 'epicoftimewasted_user_registration_confirmed';
+				$route = $this->container->getParameter('epicoftimewasted_user.registration.routes.confirmed');
 			}
 
-			$this->setFlash('epicoftimewasted_user_success', 'registration.flash.user_created');
+//			$this->setFlash('epicoftimewasted_user_success', 'registration.flash.user_created');
 			return new RedirectResponse($this->generateUrl($route));
 		}
 

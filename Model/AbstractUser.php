@@ -2,7 +2,7 @@
 
 namespace Epicoftimewasted\UserBundle\Model;
 
-//use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 
 abstract class AbstractUser implements UserInterface
@@ -10,7 +10,7 @@ abstract class AbstractUser implements UserInterface
 	const DEFAULT_ROLE = 'ROLE_USER';
 
 	/**
-	 * @var CryptoManager $cryptoManager
+	 * @var CryptoManagerInterface $cryptoManager
 	 */
 //	protected $cryptoManager;
 
@@ -117,9 +117,9 @@ abstract class AbstractUser implements UserInterface
 	/**
 	 * Constructor.
 	 *
-	 * @param CryptoManager $cryptoManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 */
-	public function __construct(/*CryptoManager*/ $cryptoManager)
+	public function __construct(CryptoManagerInterface $cryptoManager)
 	{
 //		$this->cryptoManager = $cryptoManager;
 

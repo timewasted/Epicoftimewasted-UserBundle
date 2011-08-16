@@ -2,7 +2,7 @@
 
 namespace Epicoftimewasted\UserBundle\Entity;
 
-//use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Doctrine\ORM\EntityManager;
 use Epicoftimewasted\UserBundle\Model\AbstractUserManager;
 use Epicoftimewasted\UserBundle\Model\UserInterface;
@@ -34,11 +34,11 @@ class UserManager extends AbstractUserManager
 	 * @param integer $workFactor
 	 * @param CanonicalizerInterface $usernameCanonicalizer
 	 * @param CanonicalizerInterface $emailCanonicalizer
-	 * @param CryptoManager $cryptoManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 * @param EntityManager $em
 	 * @param string $class
 	 */
-	public function __construct(EncoderFactoryInterface $encoderFactory, $algorithm, $workFactor, CanonicalizerInterface $usernameCanonicalizer, CanonicalizerInterface $emailCanonicalizer, /*CryptoManager*/ $cryptoManager, EntityManager $em, $class)
+	public function __construct(EncoderFactoryInterface $encoderFactory, $algorithm, $workFactor, CanonicalizerInterface $usernameCanonicalizer, CanonicalizerInterface $emailCanonicalizer, CryptoManagerInterface $cryptoManager, EntityManager $em, $class)
 	{
 		parent::__construct($encoderFactory, $algorithm, $workFactor, $usernameCanonicalizer, $emailCanonicalizer, $cryptoManager);
 

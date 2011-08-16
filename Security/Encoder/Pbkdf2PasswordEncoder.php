@@ -2,13 +2,13 @@
 
 namespace Epicoftimewasted\UserBundle\Security\Encoder;
 
-//use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Symfony\Component\Security\Core\Encoder\BasePasswordEncoder;
 
 class Pbkdf2PasswordEncoder extends BasePasswordEncoder
 {
 	/**
-	 * @var CryptoManager $cryptoManager
+	 * @var CryptoManagerInterface $cryptoManager
 	 */
 	private $cryptoManager;
 
@@ -25,11 +25,11 @@ class Pbkdf2PasswordEncoder extends BasePasswordEncoder
 	/**
 	 * Constructor.
 	 *
-	 * @param CryptoManager $cryptoManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 * @param string $algorithm
 	 * @param integer $workFactor
 	 */
-	public function __construct(/*CryptoManager*/ $cryptoManager, $algorithm = 'sha512', $iterations = 5000)
+	public function __construct(CryptoManagerInterface $cryptoManager, $algorithm = 'sha512', $iterations = 5000)
 	{
 		$this->cryptoManager = $cryptoManager;
 		$this->algorithm = $algorithm;
@@ -52,10 +52,10 @@ class Pbkdf2PasswordEncoder extends BasePasswordEncoder
 	 */
 	public function encodePassword($raw, $salt)
 	{
-		$oldHashAlgorithm = $this->cryptoManager->getHashAlgorithm();
-		$this->cryptoManager->setHashAlgorithm($this->algorithm);
-		$password = $this->cryptoManager->pbkdf2($raw, $salt, $this->workFactor, $this->cryptoManager->getHashAlgorithmSize());
-		$this->cryptoManager->setHashAlgorithm($oldHashAlgorithm);
+		$this->cryptoManager->changeHashAlgorithm($this->algorithm);
+		$password = $this->cryptoManager->pbkdf2($raw, $salt, $this->workFactor, strlen(hash($this->algorithm, null, true)));
+		$this->cryptoManager->restoreHashAlgorithm();
+
 		return $password;
 	}
 

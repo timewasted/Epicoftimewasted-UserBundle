@@ -2,7 +2,7 @@
 
 namespace Epicoftimewasted\UserBundle\Model;
 
-//use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Epicoftimewasted\UserBundle\Util\CanonicalizerInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -38,7 +38,7 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	protected $emailCanonicalizer;
 
 	/**
-	 * @var CryptoManager $cryptoManager
+	 * @var CryptoManagerInterface $cryptoManager
 	 */
 	protected $cryptoManager;
 
@@ -50,9 +50,9 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	 * @param integer $workFactor
 	 * @param CanonicalizerInterface $usernameCanonicalizer
 	 * @param CanonicalizerInterface $emailCanonicalizer
-	 * @param CryptoManager $cryptoManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 */
-	public function __construct(EncoderFactoryInterface $encoderFactory, $algorithm, $workFactor, CanonicalizerInterface $usernameCanonicalizer, CanonicalizerInterface $emailCanonicalizer, /*CryptoManager*/ $cryptoManager)
+	public function __construct(EncoderFactoryInterface $encoderFactory, $algorithm, $workFactor, CanonicalizerInterface $usernameCanonicalizer, CanonicalizerInterface $emailCanonicalizer, CryptoManagerInterface $cryptoManager)
 	{
 		$this->encoderFactory = $encoderFactory;
 		$this->algorithm = $algorithm;

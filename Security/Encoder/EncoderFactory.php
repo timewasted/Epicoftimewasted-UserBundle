@@ -2,7 +2,7 @@
 
 namespace Epicoftimewasted\UserBundle\Security\Encoder;
 
-//use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 class EncoderFactory implements EncoderFactoryInterface
 {
 	/**
-	 * @var CryptoManager $cryptoManager
+	 * @var CryptoManagerInterface $cryptoManager
 	 */
 	private $cryptoManager;
 
@@ -32,11 +32,11 @@ class EncoderFactory implements EncoderFactoryInterface
 	/**
 	 * Constructor.
 	 *
-	 * @param CryptoManager $cryptoManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 * @param string $encoderClass
 	 * @param EncoderFactoryInterface $genericFactory
 	 */
-	public function __construct(/*CryptoManager*/ $cryptoManager, $encoderClass, EncoderFactoryInterface $genericFactory)
+	public function __construct(CryptoManagerInterface $cryptoManager, $encoderClass, EncoderFactoryInterface $genericFactory)
 	{
 		$this->cryptoManager = $cryptoManager;
 		$this->encoderClass = $encoderClass;

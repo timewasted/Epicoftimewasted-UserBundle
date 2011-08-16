@@ -15,7 +15,7 @@
             <argument>%epicoftimewasted_user.encoder.work_factor%</argument>
             <argument type="service" id="epicoftimewasted_user.util.username_canonicalizer" />
             <argument type="service" id="epicoftimewasted_user.util.email_canonicalizer" />
-            <argument type="service" id="crypto.crypto_manager" />
+            <argument type="service" id="epicoftimewasted_crypto.crypto_manager" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument>%epicoftimewasted_user.model.user.class%</argument>
         </service>

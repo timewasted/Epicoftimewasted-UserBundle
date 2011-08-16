@@ -2,13 +2,13 @@
 
 namespace Epicoftimewasted\UserBundle\Security\Encoder;
 
-//use Epicoftimewasted\CryptoBundle\Security\CryptoManager;
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Symfony\Component\Security\Core\Encoder\BasePasswordEncoder;
 
 class BcryptPasswordEncoder extends BasePasswordEncoder
 {
 	/**
-	 * @var CryptoManager $cryptoManager
+	 * @var CryptoManagerInterface $cryptoManager
 	 */
 	private $cryptoManager;
 
@@ -20,11 +20,11 @@ class BcryptPasswordEncoder extends BasePasswordEncoder
 	/**
 	 * Constructor.  Note that algorithm is actually ignored here.
 	 *
-	 * @param CryptoManager $cryptoManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 * @param string $algorithm (ignored)
 	 * @param integer $workFactor
 	 */
-	public function __construct(/*CryptoManager*/ $cryptoManager, $algorithm = null, $workFactor = 10)
+	public function __construct(CryptoManagerInterface $cryptoManager, $algorithm = null, $workFactor = 10)
 	{
 		$this->cryptoManager = $cryptoManager;
 		$this->workFactor = $workFactor;

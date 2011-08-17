@@ -53,7 +53,7 @@ class Pbkdf2PasswordEncoder extends BasePasswordEncoder
 	public function encodePassword($raw, $salt)
 	{
 		$this->cryptoManager->changeHashAlgorithm($this->algorithm);
-		$password = $this->cryptoManager->pbkdf2($raw, $salt, $this->workFactor, strlen(hash($this->algorithm, null, true)));
+		$password = $this->cryptoManager->pbkdf2($raw, $salt, $this->workFactor, $this->cryptoManager->getHashAlgorithmSize());
 		$this->cryptoManager->restoreHashAlgorithm();
 
 		return $password;

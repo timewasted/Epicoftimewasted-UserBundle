@@ -56,9 +56,9 @@ class CryptoPasswordEncoder extends BasePasswordEncoder
 			return $this->cryptoManager->bcrypt($raw, $salt, $this->workFactor);
 
 		// If the algorithm isn't bcrypt, it's a hash algorithm for pbkdf2.
-		$this->changeHashAlgorithm($this->algorithm);
-		$password = $this->cryptoManager->pbkdf2($raw, $salt, $this->workFactor, strlen(hash($this->algorithm, null, true)));
-		$this->restoreHashAlgorithm();
+		$this->cryptoManager->changeHashAlgorithm($this->algorithm);
+		$password = $this->cryptoManager->pbkdf2($raw, $salt, $this->workFactor, $this->cryptoManager->getHashAlgorithmSize());
+		$this->cryptoManager->restoreHashAlgorithm();
 
 		return $password;
 	}

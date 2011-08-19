@@ -70,12 +70,6 @@ class ResettingController extends Controller
 			$this->get('epicoftimewasted_user.mailer')->sendResettingPasswordEmail($user);
 			$user->setPasswordRequestedAt(new \DateTime());
 			$this->get('epicoftimewasted_user.user_manager')->updateUser($user);
-		} else {
-			/**
-			 * Sleep for 1-2 seconds before continuing to simulate the delay of
-			 * sending an e-mail.
-			 */
-			usleep(mt_rand(1000000, 2000000));
 		}
 
 		/**

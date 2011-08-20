@@ -69,6 +69,7 @@ class ResettingFormHandler
 	{
 		$user->setPlainPassword($this->getNewPassword());
 		$user->removeConfirmationToken();
+		$user->setPasswordRequestedAt(null);
 		$user->setAccountEnabled(true);
 		$this->userManager->updateUser($user);
 	}

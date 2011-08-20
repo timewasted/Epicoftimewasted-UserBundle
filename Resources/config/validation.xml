@@ -23,7 +23,7 @@
                 <option name="message">Username is too short</option>
             </constraint>
             <constraint name="MaxLength">
-                <option name="limit">255</option>
+                <option name="limit">64</option>
                 <option name="message">Username is too long</option>
             </constraint>
         </property>

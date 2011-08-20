@@ -27,19 +27,41 @@ class SecurityController extends Controller
 
 		/**
 		 * If there was an authentication error, return a generic error message
-		 * to avoid leaking anything potentially sensitive.
+		 * to avoid leaking anything potentially sensitive.  Also, check to see
+		 * if there is a referer URL saved to the session, so that we can send
+		 * the user back to the correct page even after a failed auth attempt.
 		 */
-		if( $error !== null )
+		if( $error !== null ) {
 			$error = 'security.login.authentication_failed';
+			if( $session->has('_security.login_referer_url') ) {
+				$referer = $session->get('_security.login_referer_url');
+				$session->remove('_security.login_referer_url');
+			}
+		}
 
 		/**
-		 * Store the referer information for use in the login form.  Symfony
-		 * can somewhat handle this for us, but it doesn't work properly if the
-		 * user actually clicks on a "login" link.
-		 *
-		 * FIXME: Perhaps sanitize the referer to make sure it points to our site?
+		 * If we don't have a referer saved from a previous login attempt, get
+		 * the referer for this request.  This will allow us to redirect back
+		 * to the proper page after a successful login attempt.  Symfony can
+		 * somewhat handle this for us, but by doing it manually we get a much
+		 * larger degree of control.
 		 */
-		$referer = $request->headers->get('Referer');
+		if( !isset($referer) )
+			$referer = $request->headers->get('Referer');
+
+		/**
+		 * Attempt to sanitize the referer a bit.
+		 *
+		 * FIXME: Find a way to verify that the referer is from our domain name.
+		 */
+		if( $referer == $this->generateUrl('_security_login', array(), true) )
+			$referer = null;
+
+		/**
+		 * Store the referer in the session.
+		 */
+		if( !empty($referer) )
+			$session->set('_security.login_referer_url', $referer);
 
 		/**
 		 * Get the last username the user attempted to login as.

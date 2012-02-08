@@ -123,7 +123,9 @@ class SecurityController extends Controller
 		/**
 		 * Render the login form.
 		 */
+		$csrfToken = $this->get('form.csrf_provider')->generateCsrfToken('epicoftimewasted_user_security_login');
 		$response = $this->render('EpicoftimewastedUserBundle:Security:login.html.twig', array(
+			'csrf_token' => $csrfToken,
 			'error' => $error,
 			'referer' => empty($referer) ? null : $referer,
 			'last_username' => null,

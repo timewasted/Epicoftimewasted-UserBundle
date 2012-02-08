@@ -7,6 +7,7 @@
 {% if error %}
 		<div class="note"><h1>{{ error|trans({}, 'EpicoftimewastedUserBundle') }}</h1></div>
 {% endif %}
+		<input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
 
 		<div class="label"><label for="username">{{ 'security.login.username'|trans({}, 'EpicoftimewastedUserBundle') }}</label></div>
 		<div class="content"><input type="text" id="username" name="_username" value="{{ last_username }}" autofocus="autofocus" /></div>

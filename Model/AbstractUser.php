@@ -2,17 +2,11 @@
 
 namespace Epicoftimewasted\UserBundle\Model;
 
-use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 
 abstract class AbstractUser implements UserInterface
 {
 	const DEFAULT_ROLE = 'ROLE_USER';
-
-	/**
-	 * @var CryptoManagerInterface $cryptoManager
-	 */
-//	protected $cryptoManager;
 
 	/**
 	 * @var string $username
@@ -116,15 +110,9 @@ abstract class AbstractUser implements UserInterface
 
 	/**
 	 * Constructor.
-	 *
-	 * @param CryptoManagerInterface $cryptoManager
 	 */
-	public function __construct(CryptoManagerInterface $cryptoManager)
+	public function __construct()
 	{
-//		$this->cryptoManager = $cryptoManager;
-
-		$this->salt = $cryptoManager->getEntropy(32);
-//		$this->createConfirmationToken();
 		$this->createdAt = new \DateTime();
 		$this->failedLoginAttempts = 0;
 		$this->roles = array();
@@ -252,6 +240,14 @@ abstract class AbstractUser implements UserInterface
 	public function getSalt()
 	{
 		return $this->salt;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setSalt($salt)
+	{
+		$this->salt = $salt;
 	}
 
 	/**

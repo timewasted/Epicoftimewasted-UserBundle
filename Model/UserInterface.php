@@ -144,6 +144,14 @@ interface UserInterface extends AdvancedUserInterface, \Serializable
 	public function setRoles($roles);
 
 	/**
+	 * Sets a user's salt.
+	 *
+	 * @param string $salt
+	 * @return void
+	 */
+	public function setSalt($salt);
+
+	/**
 	 * Gets the e-mail address associated with the account.
 	 *
 	 * @return string

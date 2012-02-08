@@ -109,8 +109,9 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	public function createUser()
 	{
 		$class = $this->getClass();
-		$user = new $class($this->cryptoManager);
+		$user = new $class();
 		$this->createConfirmationToken($user);
+		$user->setSalt($this->cryptoManager->getEntropy(32));
 		$user->setAlgorithm($this->algorithm);
 		$user->setWorkFactor($this->workFactor);
 		$user->setRoles(array('ROLE_USER'));
@@ -123,10 +124,11 @@ abstract class AbstractUserManager implements UserManagerInterface, UserProvider
 	public function createTemporaryUser()
 	{
 		$class = $this->getClass();
-		$user = new $class($this->cryptoManager);
+		$user = new $class();
 		$tempString = 'temp_' . bin2hex($this->cryptoManager->getEntropy(16));
 		$user->setUsername($tempString);
 		$user->setEmail($tempString);
+		$user->setSalt($this->cryptoManager->getEntropy(32));
 		$user->setAlgorithm($this->algorithm);
 		$user->setWorkFactor(8);
 		$user->setPlainPassword($tempString);

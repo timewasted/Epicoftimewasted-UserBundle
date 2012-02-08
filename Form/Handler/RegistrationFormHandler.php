@@ -54,7 +54,7 @@ class RegistrationFormHandler
 		$this->captcha = $captcha;
 	}
 
-	public function process($confirmation = false)
+	public function process($confirmationRequired = false)
 	{
 		$user = $this->userManager->createUser();
 		$this->form->setData($user);
@@ -62,7 +62,7 @@ class RegistrationFormHandler
 		if( $this->request->getMethod() === 'POST' ) {
 			$this->form->bindRequest($this->request);
 			if( $this->captcha->isCaptchaValid() && $this->form->isValid() ) {
-				$this->onSuccess($user, $confirmation);
+				$this->onSuccess($user, $confirmationRequired);
 				return true;
 			}
 		}
@@ -70,9 +70,9 @@ class RegistrationFormHandler
 		return false;
 	}
 
-	protected function onSuccess(UserInterface $user, $confirmation)
+	protected function onSuccess(UserInterface $user, $confirmationRequired)
 	{
-		if( $confirmation ) {
+		if( $confirmationRequired ) {
 			$user->setAccountEnabled(false);
 			$this->mailer->sendConfirmationEmail($user);
 		} else {

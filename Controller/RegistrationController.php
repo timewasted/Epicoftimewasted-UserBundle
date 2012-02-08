@@ -28,15 +28,15 @@ class RegistrationController extends Controller
 
 		$form = $this->get('epicoftimewasted_user.registration.form');
 		$formHandler = $this->get('epicoftimewasted_user.registration.form.handler');
-		$confirmationEnabled = $this->container->getParameter('epicoftimewasted_user.registration.confirmation.enabled');
+		$confirmationRequired = $this->container->getParameter('epicoftimewasted_user.registration.confirmation.enabled');
 
 		/**
 		 * Determine whether or not to process this request.
 		 */
-		if( $formHandler->process($confirmationEnabled) ) {
+		if( $formHandler->process($confirmationRequired) ) {
 			$user = $form->getData();
 
-			if( $confirmationEnabled ) {
+			if( $confirmationRequired ) {
 				$this->get('session')->set('epicoftimewasted_user_send_confirmation_email/email', $user->getEmail());
 				$route = 'epicoftimewasted_user_registration_check_email';
 			} else {
@@ -44,7 +44,6 @@ class RegistrationController extends Controller
 				$route = $this->container->getParameter('epicoftimewasted_user.registration.routes.confirmed');
 			}
 
-//			$this->setFlash('epicoftimewasted_user_success', 'registration.flash.user_created');
 			return new RedirectResponse($this->generateUrl($route));
 		}
 
@@ -172,13 +171,5 @@ class RegistrationController extends Controller
 		$token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
 
 		$this->get('security.context')->setToken($token);
-	}
-
-	/**
-	 * Store a message in the session.
-	 */
-	public function setFlash($action, $message)
-	{
-		$this->get('session')->setFlash($action, $message);
 	}
 }

@@ -173,12 +173,4 @@ class ResettingController extends Controller
 
 		$this->get('security.context')->setToken($token);
 	}
-
-	/**
-	 * Store a message in the session.
-	 */
-	public function setFlash($action, $message)
-	{
-		$this->get('session')->setFlash($action, $message);
-	}
 }

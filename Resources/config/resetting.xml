@@ -21,6 +21,7 @@
             <argument type="service" id="epicoftimewasted_user.resetting.form" />
             <argument type="service" id="request" />
             <argument type="service" id="epicoftimewasted_user.user_manager" />
+            <argument type="service" id="epicoftimewasted_crypto.crypto_manager" />
         </service>
     </services>
 

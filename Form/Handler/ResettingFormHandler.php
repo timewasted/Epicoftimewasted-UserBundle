@@ -2,6 +2,7 @@
 
 namespace Epicoftimewasted\UserBundle\Form\Handler;
 
+use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Epicoftimewasted\UserBundle\Form\Model\ResetPassword;
 use Epicoftimewasted\UserBundle\Model\UserInterface;
 use Epicoftimewasted\UserBundle\Model\UserManagerInterface;
@@ -26,17 +27,24 @@ class ResettingFormHandler
 	protected $userManager;
 
 	/**
+	 * @var CryptoManagerInterface $cryptoManager
+	 */
+	protected $cryptoManager;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Form $form
 	 * @param Request $request
 	 * @param UserManagerInterface $userManager
+	 * @param CryptoManagerInterface $cryptoManager
 	 */
-	public function __construct(Form $form, Request $request, UserManagerInterface $userManager)
+	public function __construct(Form $form, Request $request, UserManagerInterface $userManager, CryptoManagerInterface $cryptoManager)
 	{
 		$this->form = $form;
 		$this->request = $request;
 		$this->userManager = $userManager;
+		$this->cryptoManager = $cryptoManager;
 	}
 
 	/**
@@ -67,6 +75,7 @@ class ResettingFormHandler
 
 	protected function onSuccess(UserInterface $user)
 	{
+		$user->setSalt($this->cryptoManager->getEntropy(32));
 		$user->setPlainPassword($this->getNewPassword());
 		$user->removeConfirmationToken();
 		$user->setPasswordRequestedAt(null);

@@ -51,13 +51,23 @@ class UserListener implements EventSubscriber
 
 	private function handleEvent(LifecycleEventArgs $args)
 	{
-		if( $this->userManager === null )
-			$this->userManager = $this->container->get('epicoftimewasted_user.user_manager');
-
 		$entity = $args->getEntity();
 		if( $entity instanceof UserInterface ) {
+			if( $this->userManager === null )
+				$this->userManager = $this->container->get('epicoftimewasted_user.user_manager');
+
 			$this->userManager->updateCanonicalFields($entity);
 			$this->userManager->updatePassword($entity);
+			if( $args instanceof PreUpdateEventArgs ) {
+				/**
+				 * Make Doctrine re-check to see if the canonical fields and/or
+				 * the password field has changed.
+				 */
+				$em = $args->getEntityManager();
+				$uow = $em->getUnitOfWork();
+				$meta = $em->getClassMetadata(get_class($entity));
+				$uow->recomputeSingleEntityChangeSet($meta, $entity);
+			}
 		}
 	}
 }

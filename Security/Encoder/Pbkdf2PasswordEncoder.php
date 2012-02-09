@@ -5,6 +5,9 @@ namespace Epicoftimewasted\UserBundle\Security\Encoder;
 use Epicoftimewasted\CryptoBundle\Security\CryptoManagerInterface;
 use Symfony\Component\Security\Core\Encoder\BasePasswordEncoder;
 
+/**
+ * NOTE: This is NOT used.  It is only included for reference.
+ */
 class Pbkdf2PasswordEncoder extends BasePasswordEncoder
 {
 	/**

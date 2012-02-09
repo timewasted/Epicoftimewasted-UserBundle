@@ -7,6 +7,7 @@
     <parameters>
         <parameter key="epicoftimewasted_user.encoder_factory.class">Epicoftimewasted\UserBundle\Security\Encoder\EncoderFactory</parameter>
         <parameter key="epicoftimewasted_user.security.encoder.crypto.class">Epicoftimewasted\UserBundle\Security\Encoder\CryptoPasswordEncoder</parameter>
+        <parameter key="epicoftimewasted_user.security.interactive_login_listener.class">Epicoftimewasted\UserBundle\Security\InteractiveLoginListener</parameter>
         <parameter key="epicoftimewasted_user.security.authentication.failure_handler.class">Epicoftimewasted\UserBundle\Security\Authentication\FailureHandler</parameter>
     </parameters>
 
@@ -18,6 +19,11 @@
         </service>
 
         <service id="security.encoder_factory" alias="epicoftimewasted_user.encoder_factory" public="false" />
+
+        <service id="epicoftimewasted_user.security.interactive_login_listener" class="%epicoftimewasted_user.security.interactive_login_listener.class%">
+            <argument type="service" id="epicoftimewasted_user.user_manager" />
+            <tag name="kernel.event_listener" event="security.interactive_login" method="onSecurityInteractiveLogin" />
+        </service>
 
         <service id="epicoftimewasted_user.security.authentication.failure_handler" class="%epicoftimewasted_user.security.authentication.failure_handler.class%">
             <argument type="service" id="router" />

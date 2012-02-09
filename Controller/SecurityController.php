@@ -12,22 +12,13 @@ class SecurityController extends Controller
 	{
 		$request = $this->get('request');
 		$session = $request->getSession();
-		/**
-		 * FIXME: I'm not sure this is the best way to handle null sessions.
-		 */
-/*
-		if( $session === null ) {
-			$session = $this->get('session');
-			$request->setSession($session);
-		}
-*/
 
 		/**
 		 * Check to see if there is an authentication error.
 		 */
 		if( $request->attributes->has(SecurityContext::AUTHENTICATION_ERROR) ) {
 			$error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-		} elseif( $session !== null && $session->has(SecurityContext::AUTHENTICATION_ERROR) ) {
+		} elseif( $session->has(SecurityContext::AUTHENTICATION_ERROR) ) {
 			$error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
 			$session->remove(SecurityContext::AUTHENTICATION_ERROR);
 		} else {

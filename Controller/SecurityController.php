@@ -75,7 +75,16 @@ class SecurityController extends Controller
 //		$lastUsername = $session === null ? null : $session->get(SecurityContext::LAST_USERNAME);
 
 		/**
-		 * Perform login attempt throttling.
+		 * Perform login attempt throttling.  This handles the UI aspects of
+		 * the throttling.
+		 *
+		 * FIXME: This has some subtle flaws.  For example, imagine someone
+		 * tries to brute force the password for the "admin" account.  The
+		 * next time "admin" tried to legitimately log in, they would be
+		 * greeted by a normal login screen.  However, when they entered their
+		 * valid credentials, login would fail due to an invalid captcha.
+		 * This is because SecurityContext::LAST_USERNAME likely wouldn't be
+		 * set on their first login attempt, so no captcha would be shown.
 		 */
 		if( $this->container->getParameter('epicoftimewasted_user.security.login_throttling.enabled') === true ) {
 			$userManager = $this->get('epicoftimewasted_user.user_manager');

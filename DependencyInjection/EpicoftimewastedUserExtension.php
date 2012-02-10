@@ -132,6 +132,17 @@ class EpicoftimewastedUserExtension extends Extension
 				),
 			));
 		}
+
+		if( !empty($config['security']) ) {
+			if( !empty($config['security']['login_throttling']) ) {
+				$this->remapParametersNamespaces($config['security']['login_throttling'], $container, array(
+					'' => array(
+						'enabled' => 'epicoftimewasted_user.security.login_throttling.enabled',
+						'threshold' => 'epicoftimewasted_user.security.login_throttling.threshold',
+					),
+				));
+			}
+		}
 	}
 
 	protected function remapParameters(array $config, ContainerBuilder $container, array $map)

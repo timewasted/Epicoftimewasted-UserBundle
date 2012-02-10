@@ -41,6 +41,7 @@ class Configuration implements ConfigurationInterface
 		$this->addRegistrationSection($rootNode);
 		$this->addResettingSection($rootNode);
 		$this->addServiceSection($rootNode);
+		$this->addSecuritySection($rootNode);
 
 		return $treeBuilder;
 	}
@@ -190,6 +191,25 @@ class Configuration implements ConfigurationInterface
 						->scalarNode('email_canonicalizer')->defaultValue('epicoftimewasted_user.util.email_canonicalizer.default')->end()
 						->scalarNode('username_canonicalizer')->defaultValue('epicoftimewasted_user.util.username_canonicalizer.default')->end()
 						->scalarNode('user_manager')->defaultValue('epicoftimewasted_user.user_manager.default')->end()
+					->end()
+				->end()
+			->end();
+	}
+
+	private function addSecuritySection(ArrayNodeDefinition $node)
+	{
+		$node
+			->children()
+				->arrayNode('security')
+					->addDefaultsIfNotSet()
+					->children()
+						->arrayNode('login_throttling')
+							->addDefaultsIfNotSet()
+							->children()
+								->booleanNode('enabled')->defaultFalse()->end()
+								->scalarNode('threshold')->defaultValue(3)->end()
+							->end()
+						->end()
 					->end()
 				->end()
 			->end();

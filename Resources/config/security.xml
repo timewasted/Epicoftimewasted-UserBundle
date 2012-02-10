@@ -7,6 +7,7 @@
     <parameters>
         <parameter key="epicoftimewasted_user.encoder_factory.class">Epicoftimewasted\UserBundle\Security\Encoder\EncoderFactory</parameter>
         <parameter key="epicoftimewasted_user.security.encoder.crypto.class">Epicoftimewasted\UserBundle\Security\Encoder\CryptoPasswordEncoder</parameter>
+        <parameter key="epicoftimewasted_user.security.authentication.listener.form.class">Epicoftimewasted\UserBundle\Security\UsernamePasswordFormAuthenticationListener</parameter>
         <parameter key="epicoftimewasted_user.security.interactive_login_listener.class">Epicoftimewasted\UserBundle\Security\InteractiveLoginListener</parameter>
         <parameter key="epicoftimewasted_user.security.authentication.failure_handler.class">Epicoftimewasted\UserBundle\Security\Authentication\FailureHandler</parameter>
     </parameters>
@@ -19,6 +20,12 @@
         </service>
 
         <service id="security.encoder_factory" alias="epicoftimewasted_user.encoder_factory" public="false" />
+
+        <service id="security.authentication.listener.form" class="%epicoftimewasted_user.security.authentication.listener.form.class%" parent="security.authentication.listener.abstract" abstract="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+        </service>
 
         <service id="epicoftimewasted_user.security.interactive_login_listener" class="%epicoftimewasted_user.security.interactive_login_listener.class%">
             <argument type="service" id="epicoftimewasted_user.user_manager" />

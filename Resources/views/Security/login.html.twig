@@ -24,6 +24,12 @@
 {% endif %}
 		<input type="hidden" id="remember_me" name="_remember_me" value="on" />
 
+{% if captcha is not null %}
+		<div id="captcha">
+			{{ captcha|raw }}
+		</div>
+{% endif %}
+
 		<button type="submit">{{ 'layout.login'|trans({}, 'EpicoftimewastedUserBundle') }}</button>
 	</div>
 </form>

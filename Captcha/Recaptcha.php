@@ -55,6 +55,9 @@ class Recaptcha implements CaptchaInterface
 	 */
 	public function isCaptchaValid()
 	{
+		if( $this->request->getMethod() !== 'POST' )
+			return true;
+
 		$clientIP = $this->request->getClientIp(true);
 		$challengeField = $this->request->get('recaptcha_challenge_field');
 		$responseField = $this->request->get('recaptcha_response_field');
